@@ -1,0 +1,11 @@
+coppeliasim-zmqremoteapi-client
+pyzmq
+cbor2
+numpy
+opencv-python
+mcp[cli]
+anthropic
+google-genai
+python-dotenv
+fastapi
+uvicorn[standard]

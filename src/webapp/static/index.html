@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>robot-reasoning — painel</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --panel-2: #1e222b;
+    --border: #2a2f3a;
+    --text: #e6e8ec;
+    --muted: #8b93a3;
+    --accent: #5b9dff;
+    --ok: #3ecf8e;
+    --err: #ff6b6b;
+    --warn: #e8b339;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    height: 100vh; display: flex; flex-direction: column;
+  }
+  header {
+    padding: 10px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 16px; flex-shrink: 0;
+  }
+  header h1 { font-size: 15px; font-weight: 600; margin: 0; color: var(--text); }
+  .pill {
+    font-size: 11px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .pill.ok { color: var(--ok); border-color: var(--ok); }
+  .pill.off { color: var(--err); border-color: var(--err); }
+
+  main { flex: 1; display: grid; grid-template-columns: 340px 1fr; gap: 1px; background: var(--border); overflow: hidden; }
+  .cameras { background: var(--bg); padding: 12px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+  .cam-box { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .cam-box .label { font-size: 11px; color: var(--muted); padding: 6px 10px; border-bottom: 1px solid var(--border); }
+  .cam-box img { width: 100%; display: block; background: #000; aspect-ratio: 1; object-fit: cover; }
+
+  .right { background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+  .composer { padding: 12px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+  .composer-row { display: flex; gap: 8px; }
+  select, input[type=text] {
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 6px; padding: 7px 10px; font-size: 13px;
+  }
+  textarea {
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 6px; padding: 10px; font-size: 13px; resize: vertical; min-height: 56px;
+    font-family: inherit;
+  }
+  button {
+    background: var(--accent); color: #0b1220; border: none; border-radius: 6px;
+    padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  button:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+
+  .log { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 6px; }
+  .evt { padding: 8px 12px; border-radius: 8px; font-size: 13px; line-height: 1.45; max-width: 90%; }
+  .evt .meta { font-size: 10px; color: var(--muted); margin-bottom: 3px; text-transform: uppercase; letter-spacing: .03em; }
+  .evt.thinking { background: var(--panel); color: var(--muted); font-style: italic; }
+  .evt.text { background: var(--panel-2); }
+  .evt.tool_call { background: #142033; border: 1px solid #27406b; }
+  .evt.tool_call code { color: var(--accent); }
+  .evt.tool_result { background: #10261d; border: 1px solid #1f4a37; }
+  .evt.tool_result.err { background: #2a1414; border: 1px solid #5c2323; color: var(--err); }
+  .evt.final { background: #1b2a1f; border: 1px solid var(--ok); font-weight: 600; max-width: 100%; }
+  .evt.error { background: #2a1414; border: 1px solid var(--err); color: var(--err); max-width: 100%; }
+  .evt.warning { background: #2a2414; border: 1px solid var(--warn); color: var(--warn); max-width: 100%; }
+  .evt.system { color: var(--muted); font-size: 11px; background: none; padding: 2px 4px; }
+  pre { white-space: pre-wrap; word-break: break-word; margin: 4px 0 0; font-size: 12px; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>robot-reasoning</h1>
+    <span class="pill" id="pill-claude">claude</span>
+    <span class="pill" id="pill-gemini">gemini</span>
+  </header>
+
+  <main>
+    <div class="cameras">
+      <div class="cam-box"><div class="label">cam_overview</div><img id="cam-cam_overview"></div>
+      <div class="cam-box"><div class="label">cam_left (visão)</div><img id="cam-cam_left"></div>
+      <div class="cam-box"><div class="label">cam_right (visão)</div><img id="cam-cam_right"></div>
+    </div>
+
+    <div class="right">
+      <div class="composer">
+        <div class="composer-row">
+          <select id="provider">
+            <option value="gemini">Gemini</option>
+            <option value="claude">Claude</option>
+          </select>
+          <input type="text" id="model" placeholder="modelo (vazio = default; ex: gemini-3.5-flash-lite)">
+        </div>
+        <textarea id="task">O cubo vermelho representa lava e o cubo azul representa agua. Apague o fogo.</textarea>
+        <div class="composer-row">
+          <button id="send">Enviar tarefa</button>
+          <span class="pill" id="status">pronto</span>
+        </div>
+      </div>
+      <div class="log" id="log"></div>
+    </div>
+  </main>
+
+<script>
+const log = document.getElementById('log');
+const statusPill = document.getElementById('status');
+const sendBtn = document.getElementById('send');
+
+function addEvent(cls, meta, html) {
+  const div = document.createElement('div');
+  div.className = 'evt ' + cls;
+  div.innerHTML = (meta ? `<div class="meta">${meta}</div>` : '') + html;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
+function esc(s) {
+  return String(s ?? '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+}
+
+function handleEvent(ev) {
+  const turn = ev.turn !== undefined ? `turno ${ev.turn}` : '';
+  switch (ev.type) {
+    case 'session_starting':
+      addEvent('system', '', `conectando sessão (${esc(ev.provider)})...`);
+      break;
+    case 'task_started':
+      addEvent('system', '', `— tarefa enviada para ${esc(ev.provider)} —`);
+      break;
+    case 'turn_start':
+      break;
+    case 'thinking':
+      addEvent('thinking', `${turn} · pensando`, esc(ev.text));
+      break;
+    case 'text':
+      addEvent('text', turn, esc(ev.text));
+      break;
+    case 'tool_call':
+      addEvent('tool_call', `${turn} · chamada`, `<code>${esc(ev.name)}(${esc(JSON.stringify(ev.args))})</code>`);
+      break;
+    case 'tool_result': {
+      const cls = ev.is_error ? 'tool_result err' : 'tool_result';
+      addEvent(cls, `${turn} · ${ev.is_error ? 'erro' : 'resultado'} de ${esc(ev.name)}`, `<pre>${esc(ev.result)}</pre>`);
+      break;
+    }
+    case 'warning':
+      addEvent('warning', 'aviso', esc(ev.message));
+      break;
+    case 'final':
+      addEvent('final', 'resposta final', esc(ev.text || '(sem texto final)'));
+      break;
+    case 'task_complete':
+      addEvent('system', '', `— tarefa concluída (${esc(ev.provider)}) —`);
+      statusPill.textContent = 'pronto';
+      sendBtn.disabled = false;
+      break;
+    case 'error':
+      addEvent('error', 'erro', esc(ev.message));
+      statusPill.textContent = 'erro';
+      sendBtn.disabled = false;
+      break;
+  }
+}
+
+let ws;
+function connect() {
+  ws = new WebSocket(`ws://${location.host}/ws`);
+  ws.onmessage = (e) => handleEvent(JSON.parse(e.data));
+  ws.onclose = () => { statusPill.textContent = 'desconectado'; setTimeout(connect, 2000); };
+  ws.onopen = () => { statusPill.textContent = 'pronto'; };
+}
+connect();
+
+sendBtn.addEventListener('click', () => {
+  const task = document.getElementById('task').value.trim();
+  if (!task) return;
+  const provider = document.getElementById('provider').value;
+  const model = document.getElementById('model').value.trim() || null;
+  sendBtn.disabled = true;
+  statusPill.textContent = 'rodando...';
+  ws.send(JSON.stringify({ provider, model, task }));
+});
+
+async function refreshStatus() {
+  try {
+    const r = await fetch('/api/status');
+    const data = await r.json();
+    for (const name of ['claude', 'gemini']) {
+      const pill = document.getElementById('pill-' + name);
+      const info = data.providers[name];
+      pill.className = 'pill ' + (info.available ? 'ok' : 'off');
+      pill.textContent = name + (info.active ? ' ●' : '');
+    }
+  } catch (e) { /* ignore */ }
+}
+refreshStatus();
+setInterval(refreshStatus, 5000);
+
+function refreshCameras() {
+  for (const name of ['cam_overview', 'cam_left', 'cam_right']) {
+    const img = document.getElementById('cam-' + name);
+    img.src = `/api/camera/${name}?t=${Date.now()}`;
+  }
+}
+refreshCameras();
+setInterval(refreshCameras, 1000);
+</script>
+</body>
+</html>

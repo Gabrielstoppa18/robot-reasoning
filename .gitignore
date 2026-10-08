@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+docs/screenshots/
+docs/transcripts/_dry_run*.json
+.env
