@@ -9,3 +9,5 @@ google-genai
 python-dotenv
 fastapi
 uvicorn[standard]
+openai
+pytest

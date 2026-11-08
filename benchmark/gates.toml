@@ -1,0 +1,61 @@
+# PORTOES G2-G4 (PROTOCOLO.md, secao 2) no simulador REAL, sobre o conjunto de
+# TESTE, so com baselines (sem LLM): confirma que todo o teste e executavel
+# pelo braco (oraculo) e nao trivial (noop) antes do congelamento. Nao ha
+# exposicao do teste a LLM. Roda com --allow-unfrozen (fica no manifesto).
+
+[experiment]
+name = "portoes-test"
+split = "test"
+tasks_file = "benchmark/tasks/instructions.json"
+lock_file = "benchmark/FROZEN.json"
+results_dir = "benchmark/results/portoes-test"
+lang = "pt"
+global_seed = 20261008
+seeds = 1                 # sementes (cenas) por instrucao e variante
+max_turns = 25            # turnos de modelo por episodio
+max_tool_calls = 40       # chamadas de ferramenta por episodio
+episode_timeout_s = 900   # acima disso: infra_error (simulador travado)
+max_attempts = 3          # tentativas por episodio em api_error/infra_error
+budget_usd = 25.0         # o runner para ao atingir (soma de cost_usd); estimativa ~US$ 4 (so Gemini)
+
+[scene]
+workspace_x = [0.20, 0.55]
+workspace_y = [0.02, 0.42]
+max_reach_xy = 0.62      # distancia maxima da base: alem disso o braco nao alcanca a mesa com a garra vertical
+min_sep = 0.10
+base_xy = [0.0, 0.0]      # conferido pelo backend real a cada reset (posicao de /UR5)
+settle_steps = 20         # passos (1 s) para a fisica assentar antes da leitura final
+
+# Sobrescreve benchmark.predicates.TOL (metros). Vazio = valores do codigo.
+[tolerances]
+
+# Limiares da atribuicao de falhas (Quadro 6.3).
+[attribution]
+perception_mm = 10.0
+release_xy = 0.015
+final_vs_symbolic = 0.015
+
+# ---- condicoes ------------------------------------------------------------
+# Nucleo (H1, H2, H3, H5): guided (indireta + gemea direta) e minimal (indireta).
+[[conditions]]
+name = "guided"
+scaffolding = "guided"
+variants = ["indirect", "direct"]
+
+[[conditions]]
+name = "perturb"
+scaffolding = "guided"
+variants = ["indirect"]
+perturb = true
+only_perturbable = true
+
+# ---- baselines (sem API) ------------------------------------------------------
+[[baselines]]
+label = "base-noop"
+model = "noop"
+
+[[baselines]]
+label = "base-oraculo"
+model = "oracle"
+
+[prices]
