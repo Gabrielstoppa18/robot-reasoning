@@ -1,4 +1,5 @@
 """Controle do UR5 via IK (plugin simIK), dirigindo o dummy '/UR5_target'."""
+import itertools
 import math
 
 _STEPS_PER_MOVE = 10  # numero minimo de pontos do plano por movimento
@@ -10,6 +11,17 @@ _SETTLE_TOL = 0.005  # rad (pose ready)
 _SETTLE_TIP_TOL = 0.0015  # m: ponta no ultimo ponto do plano
 _TRACK_TIP_TOL = 0.01  # m: atraso maximo da ponta em relacao ao ponto atual do plano
 _TRACK_MAX_STEPS = 20
+_POLAR_MIN_SWING = 0.2  # rad de giro da base a partir do qual o transporte e polar
+_POLAR_MIN_RADIUS = 0.15  # m: mais perto do eixo que isso, a reta e usada
+_CHECKED_JOINTS = (2, 3, 4)  # cotovelo, punho 1, punho 2 (indices em self.joints)
+_JOINT_SPACE_MIN_DIST = 0.2  # m: acima disso o movimento e planejado em espaco de juntas
+_JOINT_SPACE_STEP = 0.04  # rad maximos por ponto no espaco de juntas
+_ELBOW_UP_SEED = [0.1, -2.0, 0.3, 1.57, 0.0]  # juntas 2..6: cotovelo para cima (junta 1 = direcao do alvo)
+_ELBOW_UP_Z = 0.15  # m: altura minima do eixo do cotovelo no ramo cotovelo-para-cima
+_TIP_SAG_TOL = 0.03  # m: quanto a ponta pode passar abaixo dos dois extremos no transporte
+_MAX_TURN = 4.5  # rad: maior giro de uma junta aceito entre a pose atual e a final
+_MAX_COMBOS = 12  # voltas equivalentes testadas por solucao de IK
+_MIN_JOINT_Z = 0.06  # m: altura minima dos eixos (meia espessura dos elos ~6 cm; a pose ready tem o ombro a 9 cm)
 
 # pose "ready" do UR5, longe da singularidade de braco totalmente esticado
 # (todos os joints em 0), que deixa a IK instavel/presa. Usada so na
@@ -145,6 +157,77 @@ class UR5Arm:
     def get_tip_pose(self):
         return self.sim.getObjectPose(self.tip, -1)
 
+    def _fk(self, q):
+        """Pose da ponta e altura dos eixos checados para uma configuracao,
+        no ambiente de IK (nao mexe no braco da cena)."""
+        ik, env, w = self.simIK, self.ik_env, self.simIK.handle_world
+        for h, v in zip(self._ik_joints, q):
+            ik.setJointPosition(env, h, v)
+        tip = ik.getObjectPose(env, self._ik_tip, w)
+        low = min(ik.getObjectPose(env, self._ik_joints[i], w)[2] for i in _CHECKED_JOINTS)
+        return tip, low
+
+    def _plan_joint_space(self, position, end_quat, start_pos, steps):
+        """Interpola as juntas da configuracao atual ate uma solucao de IK do
+        alvo no ramo cotovelo-para-cima. Devolve None (e o chamador cai na
+        reta cartesiana) se nao houver solucao precisa ou se o caminho
+        deixar eixos abaixo de _MIN_JOINT_Z ou a ponta abaixo de ambos os
+        extremos (varreria a mesa/cubos)."""
+        ik, env, grp, w = self.simIK, self.ik_env, self.ik_group, self.simIK.handle_world
+        q_cur = [self.sim.getJointPosition(j) for j in self.joints]
+        th = math.atan2(position[1], position[0])
+        best = None
+        for dth in (0.0, 0.15, -0.15, 0.3, -0.3):
+            seed = [th + math.pi / 2 + dth] + _ELBOW_UP_SEED
+            for h, v in zip(self._ik_joints, seed):
+                ik.setJointPosition(env, h, v)
+            ik.setObjectPose(env, self._ik_target, list(position) + list(end_quat), w)
+            for _ in range(4):
+                ik.handleGroup(env, grp)
+            tip = ik.getObjectPose(env, self._ik_tip, w)
+            if math.dist(tip[:3], position) > _IK_POS_TOL:
+                continue
+            q_raw = [ik.getJointPosition(env, h) for h in self._ik_joints]
+            _, low = self._fk(q_raw)
+            elbow_z = ik.getObjectPose(env, self._ik_joints[2], w)[2]
+            if low < _MIN_JOINT_Z or elbow_z < _ELBOW_UP_Z:
+                continue
+            # a mesma pose tem varias voltas equivalentes (q + 2*pi*k) por
+            # junta; a mais proxima nem sempre faz o caminho seguro (o cotovelo
+            # girando "por dentro" derruba o punho), entao testa as voltas das
+            # tres primeiras juntas em ordem de custo
+            cands = []
+            for i, (v, r) in enumerate(zip(q_raw, q_cur)):
+                opts = [v + 2 * math.pi * k for k in (-1, 0, 1)] if i in (1, 2, 3) else [_unwrap(v, r)]
+                cands.append([o for o in opts if abs(o - r) <= _MAX_TURN] or [_unwrap(v, r)])
+            combos = sorted(itertools.product(*cands),
+                            key=lambda c: max(abs(a - b) for a, b in zip(c, q_cur)))
+            for q_end in combos[:_MAX_COMBOS]:
+                path = self._joint_path(q_cur, list(q_end), position, start_pos, steps)
+                if path is not None:
+                    cost = max(abs(a - b) for a, b in zip(q_end, q_cur))
+                    if best is None or cost < best[0]:
+                        best = (cost, path)
+                    break
+        if best is None:
+            return None
+        return best[1], list(position) + list(end_quat)
+
+    def _joint_path(self, q_cur, q_end, position, start_pos, steps):
+        """Pontos (q, posicao da ponta) entre duas configuracoes, ou None se
+        algum eixo checado ficar baixo demais ou a ponta afundar."""
+        n = max(steps, math.ceil(max(abs(a - b) for a, b in zip(q_end, q_cur)) / _JOINT_SPACE_STEP))
+        floor_z = min(start_pos[2], position[2]) - _TIP_SAG_TOL
+        path = []
+        for i in range(1, n + 1):
+            t = i / n
+            q = [a + (b - a) * t for a, b in zip(q_cur, q_end)]
+            tip, low = self._fk(q)
+            if low < _MIN_JOINT_Z or tip[2] < floor_z:
+                return None
+            path.append((q, list(tip[:3])))
+        return path
+
     def plan(self, position, orientation_quat=None, steps=_STEPS_PER_MOVE):
         """Configuracoes de junta ao longo da reta cartesiana ate a pose dada,
         cada uma resolvida a partir da anterior. Se as juntas saltarem num
@@ -154,13 +237,45 @@ class UR5Arm:
         nao tiver solucao precisa ou se o salto persistir."""
         start_pos, start_quat = self._cmd_pose[:3], self._cmd_pose[3:]
         end_quat = list(orientation_quat) if orientation_quat is not None else start_quat
-        n = max(steps, math.ceil(math.dist(start_pos, position) / _WAYPOINT_SPACING))
+
+        # Movimentos longos: espaco de juntas, no ramo "cotovelo para cima".
+        # A IK local (DLS) a partir da pose atual cai muito no ramo cotovelo
+        # para baixo (eixo do cotovelo a ~0 cm do chao) para alvos que tem
+        # solucao com o cotovelo a ~50 cm; o ramo certo e escolhido aqui.
+        if math.dist(start_pos, position) > _JOINT_SPACE_MIN_DIST:
+            planned = self._plan_joint_space(position, end_quat, start_pos, steps)
+            if planned is not None:
+                return planned
+
+        # Transporte: uma reta cartesiana entre dois pontos de lados opostos da
+        # base passa perto do eixo do ombro; ali o braco se dobra e os elos
+        # afundam no chao (medido: ate -21 cm). Quando o giro da base e
+        # grande, interpola em coordenadas polares (raio, angulo, z) em torno
+        # da base: o raio fica entre o inicial e o final e o braco so gira e
+        # estende. Em movimentos verticais/curtos coincide com a reta.
+        sr, er = math.hypot(*start_pos[:2]), math.hypot(*position[:2])
+        s_th, e_th = math.atan2(start_pos[1], start_pos[0]), math.atan2(position[1], position[0])
+        d_th = (e_th - s_th + math.pi) % (2 * math.pi) - math.pi
+        polar = abs(d_th) > _POLAR_MIN_SWING and min(sr, er) >= _POLAR_MIN_RADIUS
+
+        def path_point(t):
+            if not polar:
+                return [_lerp(start_pos[k], position[k], t) for k in range(3)]
+            r, th = _lerp(sr, er, t), s_th + d_th * t
+            return [r * math.cos(th), r * math.sin(th), _lerp(start_pos[2], position[2], t)]
+
+        if polar:
+            arc = 0.5 * (sr + er) * abs(d_th)
+            length = math.sqrt(arc ** 2 + (er - sr) ** 2 + (position[2] - start_pos[2]) ** 2)
+        else:
+            length = math.dist(start_pos, position)
+        n = max(steps, math.ceil(length / _WAYPOINT_SPACING))
         q_prev = [self.sim.getJointPosition(j) for j in self.joints]
         for h, q in zip(self._ik_joints, q_prev):
             self.simIK.setJointPosition(self.ik_env, h, q)
 
         def solve(t, ref):
-            pos = [_lerp(start_pos[k], position[k], t) for k in range(3)]
+            pos = path_point(t)
             quat = _slerp(start_quat, end_quat, t)
             for h, q in zip(self._ik_joints, ref):
                 self.simIK.setJointPosition(self.ik_env, h, q)
@@ -168,12 +283,21 @@ class UR5Arm:
             self.simIK.handleGroup(self.ik_env, self.ik_group)  # ate 50 iteracoes de DLS por chamada
             tip = self.simIK.getObjectPose(self.ik_env, self._ik_tip, self.simIK.handle_world)
             q = [_unwrap(self.simIK.getJointPosition(self.ik_env, h), r) for h, r in zip(self._ik_joints, ref)]
-            return q, pos, math.dist(tip[:3], pos), max(abs(a - b) for a, b in zip(q, ref))
+            # altura dos eixos do cotovelo e dos dois primeiros do punho: os
+            # elos tem ~6 cm de meia espessura, entao abaixo de _MIN_JOINT_Z
+            # o elo atravessa o chao (os elos nao colidem, so se veria no video)
+            low = min(self.simIK.getObjectPose(self.ik_env, self._ik_joints[i], self.simIK.handle_world)[2]
+                      for i in _CHECKED_JOINTS)
+            return q, pos, math.dist(tip[:3], pos), max(abs(a - b) for a, b in zip(q, ref)), low
 
         path, t, dt = [], 0.0, 1.0 / n
         while t < 1.0 - 1e-9:
             step = min(dt, 1.0 - t)
-            q, pos, err, jump = solve(t + step, q_prev)
+            q, pos, err, jump, low = solve(t + step, q_prev)
+            if err <= _IK_POS_TOL and low < _MIN_JOINT_Z:
+                raise UnreachablePose(
+                    f"o braco atravessaria o chao para ir a {[round(float(v), 3) for v in position]} "
+                    f"(eixo a {low * 100:.0f} cm de altura em {t * 100:.0f} % do caminho)")
             if err <= _IK_POS_TOL and jump <= _MAX_JOINT_JUMP:
                 path.append((q, pos))
                 q_prev, t = q, t + step

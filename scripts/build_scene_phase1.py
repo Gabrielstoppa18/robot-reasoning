@@ -32,8 +32,15 @@ for alias in ['/UR5', '/RG2', '/table', '/red_cube', '/blue_cube',
         else:
             sim.removeObject(h)
 
+# --- remove restos na raiz da cena (ex: uma cadeia UR5/RG2 orfa, que ficava
+# sobreposta ao /UR5 e fazia dois bracos colidirem entre si) ---
+_KEEP_ROOTS = {'/DefaultCamera', '/XYZCameraProxy', '/DefaultLights', '/Floor'}
+for h in sim.getObjectsInTree(sim.handle_scene, sim.handle_all, 2):
+    if sim.getObjectParent(h) == -1 and sim.getObjectAlias(h, 1) not in _KEEP_ROOTS:
+        sim.removeObjects(list(dict.fromkeys(sim.getObjectsInTree(h, sim.handle_all, 0))))
+
 # --- robo ---
-ur5 = sim.loadModel(f'{MODELS_DIR}/robots/non-mobile/UR5.ttm')
+ur5 =sim.loadModel(f'{MODELS_DIR}/robots/non-mobile/UR5.ttm')
 sim.setObjectAlias(ur5, 'UR5')
 
 # o .ttm vem com um script de demo (threaded) que move os joints sozinho
