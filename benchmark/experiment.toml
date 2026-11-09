@@ -1,0 +1,138 @@
+# Experimento PRINCIPAL (conjunto de teste retido). Ver benchmark/PROTOCOLO.md.
+# Este arquivo e congelado junto com o conjunto de teste (scripts/bench_freeze.py):
+# qualquer alteracao depois do congelamento muda o hash e o runner recusa rodar
+# o split "test" sem --allow-unfrozen (que fica registrado no manifesto).
+
+[experiment]
+name = "principal-v1"
+split = "test"
+tasks_file = "benchmark/tasks/instructions.json"
+lock_file = "benchmark/FROZEN.json"
+results_dir = "benchmark/results/principal-v1"
+lang = "pt"
+global_seed = 20261008
+seeds = 3                 # sementes (cenas) por instrucao e variante
+max_turns = 25            # turnos de modelo por episodio
+max_tool_calls = 40       # chamadas de ferramenta por episodio
+episode_timeout_s = 900   # acima disso: infra_error (simulador travado)
+max_attempts = 3          # tentativas por episodio em api_error/infra_error
+budget_usd = 25.0         # o runner para ao atingir (soma de cost_usd); estimativa ~US$ 4 (so Gemini)
+
+[scene]
+workspace_x = [0.20, 0.55]
+workspace_y = [0.02, 0.42]
+max_reach_xy = 0.62      # distancia maxima da base: alem disso o braco nao alcanca a mesa com a garra vertical
+min_sep = 0.10
+base_xy = [0.0, 0.0]      # conferido pelo backend real a cada reset (posicao de /UR5)
+settle_steps = 20         # passos (1 s) para a fisica assentar antes da leitura final
+
+# Sobrescreve benchmark.predicates.TOL (metros). Vazio = valores do codigo.
+[tolerances]
+
+# Limiares da atribuicao de falhas (Quadro 6.3).
+[attribution]
+perception_mm = 10.0
+release_xy = 0.015
+final_vs_symbolic = 0.015
+
+# ---- condicoes ------------------------------------------------------------
+# Nucleo (H1, H2, H3, H5): guided (indireta + gemea direta) e minimal (indireta).
+[[conditions]]
+name = "guided"
+scaffolding = "guided"
+variants = ["indirect", "direct"]
+
+[[conditions]]
+name = "minimal"
+scaffolding = "minimal"
+variants = ["indirect"]
+
+# Secundarias: perturbacao (H4) e identificadores neutros (acoplamento lexical).
+[[conditions]]
+name = "perturb"
+scaffolding = "guided"
+variants = ["indirect"]
+perturb = true
+only_perturbable = true
+
+[[conditions]]
+name = "neutral"
+scaffolding = "guided"
+variants = ["indirect"]
+neutral_ids = true
+subset_fraction = 0.5
+families = ["F1", "F2", "F4", "F5", "F6"]
+
+# Exploratoria (sem hipotese direcional): o mesmo prompt guiado + uma frase
+# que autoriza a abster-se (tool_specs.ABSTAIN_HINT). Todo o F7 entra, e 25 %
+# das instrucoes "act" entram para medir abstencao indevida.
+[[conditions]]
+name = "permissao"
+scaffolding = "guided"
+variants = ["indirect"]
+abstain_hint = true
+include_families = ["F7"]
+subset_fraction = 0.25
+
+# Reexecucao de 10 % das celulas "guided" (mesma cena, mesmo prompt) para
+# estimar a variabilidade teste-reteste do proprio modelo.
+[replicates]
+fraction = 0.10
+condition = "guided"
+
+# ---- modelos ----------------------------------------------------------------
+# So modelos pequenos e de baixo custo: a pesquisa e custeada pelo autor, sem
+# financiamento (decisao de 2026-10-08). As conclusoes valem para modelos de
+# pequeno porte (PROTOCOLO.md, secoes 5 e 8.3). Os IDs marcados com CONFIRMAR
+# precisam ser conferidos no painel do provedor NA DATA do congelamento; o
+# runner grava a versao devolvida pela API em cada episodio.
+# Claude Haiku: fora por custo (decisao de 2026-10-09). Para reincluir, descomentar.
+# [[models]]
+# label = "claude-pequeno"
+# provider = "claude"
+# model = "claude-haiku-4-5-20251001"
+# tier = "pequeno"
+# thinking = { type = "enabled", budget_tokens = 4000 }
+
+[[models]]
+label = "gemini-pequeno"
+provider = "gemini"
+model = "gemini-3.8-flash"
+tier = "pequeno"
+
+# GPT pequeno: fora ate decidir se ha conta paga na OpenAI e testar o
+# adaptador (agents/openai_agent.py nunca rodou contra a API).
+# [[models]]
+# label = "gpt-pequeno"
+# provider = "openai"
+# model = "CONFIRMAR-gpt-pequeno"
+# tier = "pequeno"
+
+# ---- baselines (sem API) ------------------------------------------------------
+[[baselines]]
+label = "base-noop"
+model = "noop"
+
+[[baselines]]
+label = "base-primeiro-mencionado"
+model = "first_mentioned"
+
+[[baselines]]
+label = "base-oraculo"
+model = "oracle"
+
+# ---- precos (USD por milhao de tokens) -----------------------------------------
+# Conferir na data do congelamento. Gemini: tabela do Gemini API (2026-10-08,
+# vale ate 2026-12-31); o pensamento e cobrado como saida mas vem fora de
+# candidates_token_count -> thinking_separate. Claude: o pensamento ja vem em
+# output_tokens. Sem cache_read no Gemini: prompt_token_count ja inclui o
+# cache (estimativa conservadora).
+[prices.claude-pequeno]
+input = 1.0
+output = 5.0
+cache_read = 0.10
+
+[prices.gemini-pequeno]
+input = 0.75
+output = 3.75
+thinking_separate = true

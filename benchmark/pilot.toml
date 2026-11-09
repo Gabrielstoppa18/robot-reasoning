@@ -1,0 +1,107 @@
+# PILOTO com o conjunto de desenvolvimento (split "dev"). Objetivos
+# (PROTOCOLO.md, secao 6): depurar o harness, medir custo e tempo por
+# episodio e detectar efeito teto/piso ANTES de congelar o conjunto de teste.
+# Os resultados do piloto nao entram nas conclusoes.
+
+[experiment]
+name = "piloto-dev"
+split = "dev"
+tasks_file = "benchmark/tasks/instructions.json"
+lock_file = "benchmark/FROZEN.json"
+results_dir = "benchmark/results/piloto-dev"
+lang = "pt"
+global_seed = 20261008
+seeds = 2
+max_turns = 25
+max_tool_calls = 40
+episode_timeout_s = 900
+max_attempts = 3
+budget_usd = 5.0          # so Gemini (estimativa ~US$ 0,30). So conta modelos com preco em [prices]
+
+[scene]
+workspace_x = [0.20, 0.55]
+workspace_y = [0.02, 0.42]
+max_reach_xy = 0.62      # distancia maxima da base: alem disso o braco nao alcanca a mesa com a garra vertical
+min_sep = 0.10
+base_xy = [0.0, 0.0]
+settle_steps = 20
+
+[tolerances]
+
+[attribution]
+perception_mm = 10.0
+release_xy = 0.015
+final_vs_symbolic = 0.015
+
+[[conditions]]
+name = "guided"
+scaffolding = "guided"
+variants = ["indirect", "direct"]
+
+[[conditions]]
+name = "minimal"
+scaffolding = "minimal"
+variants = ["indirect"]
+
+[[conditions]]
+name = "perturb"
+scaffolding = "guided"
+variants = ["indirect"]
+perturb = true
+only_perturbable = true
+seeds = 1
+
+# Exploratoria (sem hipotese direcional): o mesmo prompt guiado + uma frase
+# que autoriza a abster-se (tool_specs.ABSTAIN_HINT). Todo o F7 entra, e 25 %
+# das instrucoes "act" entram para medir abstencao indevida (no piloto, 50 %).
+[[conditions]]
+name = "permissao"
+scaffolding = "guided"
+variants = ["indirect"]
+abstain_hint = true
+include_families = ["F7"]
+subset_fraction = 0.5
+seeds = 1
+
+# Um modelo barato por provedor e as baselines.
+# Claude Haiku: fora por custo (decisao de 2026-10-09). Para reincluir, descomentar.
+# [[models]]
+# label = "claude-pequeno"
+# provider = "claude"
+# model = "claude-haiku-4-5-20251001"
+# tier = "pequeno"
+# thinking = { type = "enabled", budget_tokens = 4000 }
+
+[[models]]
+label = "gemini-pequeno"
+provider = "gemini"
+model = "gemini-3.8-flash"
+tier = "pequeno"
+
+[[baselines]]
+label = "base-noop"
+model = "noop"
+
+[[baselines]]
+label = "base-primeiro-mencionado"
+model = "first_mentioned"
+
+[[baselines]]
+label = "base-oraculo"
+model = "oracle"
+
+# USD por milhao de tokens (consultados em 2026-10-08). Gemini: vale ate
+# 2026-12-31; cobra o pensamento como saida, mas o conta fora de
+# candidates_token_count -> thinking_separate. Sem cache_read no Gemini:
+# prompt_token_count ja inclui os tokens em cache, entao o custo sai cobrado
+# como entrada cheia (estimativa conservadora). Claude: o pensamento ja vem
+# em output_tokens.
+[prices.claude-pequeno]
+input = 1.0
+output = 5.0
+cache_read = 0.10
+
+[prices.gemini-pequeno]
+input = 0.75
+output = 3.75
+thinking_separate = true

@@ -4,3 +4,7 @@ __pycache__/
 docs/screenshots/
 docs/transcripts/_dry_run*.json
 .env
+
+# benchmark: imagens (grandes) e execucoes no backend falso (nao sao dados)
+benchmark/results/*/images/
+benchmark/results/*-FAKE/

@@ -15,6 +15,19 @@ COLOR_RANGES = {
     "blue": [
         ((110, 150, 40), (130, 255, 255)),
     ],
+    # cores extras do benchmark (benchmark/palette.py). Matizes esperados
+    # pela cor difusa: verde H~60, amarelo H~26, roxo H~138. A mesa marrom
+    # tem H~15 e S~139 (abaixo do piso de 150). Faixas ainda NAO validadas
+    # na cena -- rodar scripts/bench_check_perception.py antes de usar.
+    "green": [
+        ((45, 150, 40), (75, 255, 255)),
+    ],
+    "yellow": [
+        ((20, 150, 60), (35, 255, 255)),
+    ],
+    "purple": [
+        ((132, 150, 40), (160, 255, 255)),
+    ],
 }
 
 _MIN_AREA_PX = 15
@@ -34,6 +47,14 @@ def _mask_for(hsv_image, color):
 
 def detect_color_centroid(rgb_image, color):
     """Retorna (cx, cy) em pixels do maior blob da cor, ou None se nao achar."""
+    blob = detect_color_blob(rgb_image, color)
+    return None if blob is None else blob[:2]
+
+
+def detect_color_blob(rgb_image, color):
+    """Retorna (cx, cy, area_px) do maior blob da cor, ou None se nao achar.
+    A area serve para reconhecer um blob parcialmente coberto (centroide
+    deslocado)."""
     hsv = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2HSV)
     mask = _mask_for(hsv, color)
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -45,4 +66,4 @@ def detect_color_centroid(rgb_image, color):
     m = cv2.moments(largest)
     if m["m00"] == 0:
         return None
-    return (m["m10"] / m["m00"], m["m01"] / m["m00"])
+    return (m["m10"] / m["m00"], m["m01"] / m["m00"], float(m["m00"]))

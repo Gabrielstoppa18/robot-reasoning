@@ -1,0 +1,4226 @@
+{
+ "version": "test-1.0-rascunho",
+ "notes": "Conjunto de TESTE (split=test, 56 instrucoes) e conjunto de DESENVOLVIMENTO (split=dev, 7, descartavel, so para o piloto e depuracao; NAO entra nas conclusoes). As 21 instrucoes revisadas da versao dev-0.2 foram promovidas para o teste antes de qualquer piloto com LLM (os ids trocaram 'dev-' por 'test-'); as demais 35 instrucoes de teste e as 7 de dev foram rascunhadas com auxilio de LLM (author = 'Claude Opus 5.5 (rascunho)') e precisam da revisao do pesquisador (reviewed_by) antes do congelamento (PROTOCOLO.md, secao 4). Lacunas: {A},{B},{C},{D} = papeis presentes na cena; {X} = papel ausente (F7); {OTHERS} = lista dos distratores. As cores de cada papel sao sorteadas por semente, exceto em fixed_colors. paraphrase_axes = eixo de cada parafrase (base, lexical, contexto); abstain_type = categoria de abstencao do F7 (benchmark/LITERATURA.md). As parafrases do eixo 'contexto' foram redigidas com auxilio de LLM.",
+ "instructions": [
+  {
+   "id": "test-F1-lava-agua",
+   "family": "F1",
+   "split": "test",
+   "domain": "elementos",
+   "action": "pôr sobre",
+   "canonical": true,
+   "author": "autor",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Instrucao-piloto (execucoes E1-E4 do Cap. 5). A parafrase 0 reproduz o texto original.",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "moved_role": "B",
+   "n_objects": [
+    2,
+    3
+   ],
+   "text": {
+    "pt": [
+     "O cubo {A} representa lava e o cubo {B} representa água. Apague o fogo.",
+     "Imagine que o cubo {A} é lava ardendo e o cubo {B} é um balde de água. Acabe com o fogo.",
+     "Hoje a aula é sobre os quatro elementos, e a mesa está um pouco bagunçada. O cubo {A} representa lava e o cubo {B} representa água. Apague o fogo."
+    ]
+   },
+   "direct": {
+    "pt": [
+     "Coloque o cubo {B} em cima do cubo {A}.",
+     "Empilhe o cubo {B} sobre o cubo {A}.",
+     "Ponha o cubo {B} sobre o {A}."
+    ]
+   },
+   "success": {
+    "on": [
+     "B",
+     "A"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_on",
+     "A"
+    ]
+   ],
+   "min_calls": 3,
+   "perturb": {
+    "role": "A",
+    "call_index": 0,
+    "step": 50
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ]
+  },
+  {
+   "id": "test-F1-ima-prego",
+   "family": "F1",
+   "split": "test",
+   "domain": "mecânica",
+   "action": "aproximar",
+   "canonical": true,
+   "author": "autor",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "moved_role": "B",
+   "n_objects": [
+    2,
+    4
+   ],
+   "text": {
+    "pt": [
+     "O cubo {A} é um ímã e o cubo {B} é um prego. Faça o ímã atrair o prego.",
+     "Considere o cubo {A} um ímã potente e o cubo {B} um prego de ferro. Mostre o que acontece quando o prego é atraído.",
+     "Esta montagem é para a feira de ciências da escola, que começa amanhã cedo. O cubo {A} é um ímã e o cubo {B} é um prego. Faça o ímã atrair o prego."
+    ]
+   },
+   "direct": {
+    "pt": [
+     "Coloque o cubo {B} perto do cubo {A}.",
+     "Leve o cubo {B} para junto do cubo {A}.",
+     "Aproxime o cubo {B} do cubo {A}."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "near": [
+       "B",
+       "A"
+      ]
+     },
+     {
+      "unchanged": [
+       "A"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_beside",
+     "A"
+    ]
+   ],
+   "min_calls": 4,
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "notes": "Predicado exige que o ima (A) fique parado: e o prego que e atraido. Alterado depois da revisao, para remover o atalho lexical -- conferir."
+  },
+  {
+   "id": "test-F1-vulcao-aldeia",
+   "family": "F1",
+   "split": "test",
+   "domain": "geografia",
+   "action": "afastar",
+   "canonical": false,
+   "author": "autor",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "moved_role": "B",
+   "n_objects": [
+    2,
+    3
+   ],
+   "scene_constraint": {
+    "within": [
+     "A",
+     "B",
+     0.2
+    ]
+   },
+   "text": {
+    "pt": [
+     "O cubo {A} é um vulcão prestes a entrar em erupção e o cubo {B} é uma aldeia. Proteja os moradores.",
+     "O {B} representa uma vila e o {A}, um vulcão ativo. Evacue a vila para um lugar seguro.",
+     "Meu sobrinho inventou esta brincadeira depois de ver um documentário sobre a Islândia. O cubo {A} é um vulcão prestes a entrar em erupção e o cubo {B} é uma aldeia. Proteja os moradores."
+    ]
+   },
+   "direct": {
+    "pt": [
+     "Afaste o cubo {B} do cubo {A}.",
+     "Leve o cubo {B} para longe do cubo {A}.",
+     "Coloque o cubo {B} bem longe do cubo {A}."
+    ]
+   },
+   "success": {
+    "far": [
+     "B",
+     "A"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_far",
+     "A"
+    ]
+   ],
+   "min_calls": 4,
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ]
+  },
+  {
+   "id": "test-F2-ceu-grama",
+   "family": "F2",
+   "split": "test",
+   "domain": "natureza",
+   "action": "pôr sobre",
+   "canonical": true,
+   "author": "autor",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Cores fixas: o mapeamento vem do senso comum (ceu=azul, grama=verde).",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "fixed_colors": {
+    "A": "blue",
+    "B": "green"
+   },
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Ponha o cubo que lembra o céu em cima do cubo que lembra a grama.",
+     "Coloque a cor do céu limpo sobre a cor de um gramado.",
+     "Estou testando ideias para a capa de um livro infantil, sem pressa. Ponha o cubo que lembra o céu em cima do cubo que lembra a grama."
+    ]
+   },
+   "direct": {
+    "pt": [
+     "Coloque o cubo {A} em cima do cubo {B}.",
+     "Empilhe o cubo {A} sobre o cubo {B}.",
+     "Ponha o cubo {A} sobre o {B}."
+    ]
+   },
+   "success": {
+    "on": [
+     "A",
+     "B"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_on",
+     "B"
+    ]
+   ],
+   "min_calls": 3,
+   "perturb": {
+    "role": "B",
+    "call_index": 0,
+    "step": 50
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ]
+  },
+  {
+   "id": "test-F2-semaforo",
+   "family": "F2",
+   "split": "test",
+   "domain": "trânsito",
+   "action": "pôr sobre",
+   "canonical": false,
+   "author": "autor",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Cores fixas: num semaforo vertical, 'pare' (vermelho) fica acima de 'siga' (verde).",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "fixed_colors": {
+    "A": "red",
+    "B": "green"
+   },
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Monte um pequeno semáforo com dois cubos: a cor que manda parar fica acima da que manda seguir.",
+     "Empilhe dois cubos como as luzes de um semáforo, só com 'pare' e 'siga', na ordem certa.",
+     "A turma do segundo ano vai estudar educação no trânsito na semana que vem. Monte um pequeno semáforo com dois cubos: a cor que manda parar fica acima da que manda seguir."
+    ]
+   },
+   "direct": {
+    "pt": [
+     "Coloque o cubo {A} em cima do cubo {B}.",
+     "Empilhe o cubo {A} sobre o cubo {B}.",
+     "Ponha o cubo {A} sobre o {B}."
+    ]
+   },
+   "success": {
+    "on": [
+     "A",
+     "B"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_on",
+     "B"
+    ]
+   ],
+   "min_calls": 3,
+   "perturb": {
+    "role": "B",
+    "call_index": 0,
+    "step": 50
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ]
+  },
+  {
+   "id": "test-F3-longe-perto",
+   "family": "F3",
+   "split": "test",
+   "domain": "espacial",
+   "action": "aproximar",
+   "canonical": false,
+   "author": "autor",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Papeis definidos pela geometria: A = mais longe da base, B = mais perto da base.",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "geometric_roles": {
+    "A": "farthest_from_base",
+    "B": "nearest_to_base"
+   },
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Leve o cubo que está mais longe da base do robô para perto do que está mais perto dela.",
+     "Junte o cubo mais distante da base do braço ao cubo mais próximo dela.",
+     "Depois a gente arruma o resto da bancada. Leve o cubo que está mais longe da base do robô para perto do que está mais perto dela."
+    ]
+   },
+   "direct": {
+    "pt": [
+     "Coloque o cubo {A} perto do cubo {B}.",
+     "Leve o cubo {A} para junto do cubo {B}.",
+     "Aproxime o cubo {A} do cubo {B}."
+    ]
+   },
+   "success": {
+    "near": [
+     "A",
+     "B"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_beside",
+     "B"
+    ]
+   ],
+   "min_calls": 4,
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ]
+  },
+  {
+   "id": "test-F3-fila-base",
+   "family": "F3",
+   "split": "test",
+   "domain": "espacial",
+   "action": "ordenar",
+   "canonical": false,
+   "author": "autor",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Sem gemea direta: a instrucao ja e explicita; a inferencia e espacial (referencial da base).",
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    3
+   ],
+   "text": {
+    "pt": [
+     "Alinhe os cubos {A}, {B} e {C} em fila a partir da base do robô: o {A} mais perto dela e o {C} mais longe.",
+     "Forme uma fila reta saindo da base do robô, na ordem {A}, {B}, {C}, do mais próximo ao mais distante.",
+     "O laboratório fecha às seis, mas isto não deve demorar. Alinhe os cubos {A}, {B} e {C} em fila a partir da base do robô: o {A} mais perto dela e o {C} mais longe."
+    ]
+   },
+   "success": {
+    "line_ordered": [
+     "A",
+     "B",
+     "C"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_slot",
+     0
+    ],
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_slot",
+     1
+    ],
+    [
+     "pick",
+     "C"
+    ],
+    [
+     "place_slot",
+     2
+    ]
+   ],
+   "min_calls": 7,
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "no_twin_reason": "A instrucao ja e explicita; a inferencia e espacial (referencial da base)."
+  },
+  {
+   "id": "test-F4-sobre-sem-mexer",
+   "family": "F4",
+   "split": "test",
+   "domain": "restrição",
+   "action": "pôr sobre",
+   "canonical": false,
+   "author": "autor",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Ponha o cubo {A} sobre o {B} sem mexer em nenhum dos outros cubos.",
+     "Sobre o cubo {B} deve ficar o {A}; os demais cubos não podem sair do lugar.",
+     "A câmera do laboratório foi recalibrada ontem à tarde. Ponha o cubo {A} sobre o {B} sem mexer em nenhum dos outros cubos."
+    ]
+   },
+   "direct": {
+    "pt": [
+     "Coloque o cubo {A} em cima do cubo {B}.",
+     "Empilhe o cubo {A} sobre o cubo {B}.",
+     "Ponha o cubo {A} sobre o {B}."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "on": [
+       "A",
+       "B"
+      ]
+     },
+     {
+      "unchanged": [
+       "@others"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_on",
+     "B"
+    ]
+   ],
+   "min_calls": 3,
+   "perturb": {
+    "role": "B",
+    "call_index": 0,
+    "step": 50
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ]
+  },
+  {
+   "id": "test-F4-fragil",
+   "family": "F4",
+   "split": "test",
+   "domain": "restrição",
+   "action": "aproximar",
+   "canonical": false,
+   "author": "autor",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "O cubo {C} é de vidro e não pode ser tocado. Junte o cubo {A} ao cubo {B}.",
+     "Cuidado: o {C} é frágil. Aproxime o {A} do {B} sem encostar no {C}.",
+     "Comprei estes cubos numa loja de materiais pedagógicos. O cubo {C} é de vidro e não pode ser tocado. Junte o cubo {A} ao cubo {B}."
+    ]
+   },
+   "direct": {
+    "pt": [
+     "Coloque o cubo {A} perto do cubo {B} sem mover o cubo {C}.",
+     "Leve o cubo {A} para junto do cubo {B} e não mexa no cubo {C}.",
+     "Aproxime o cubo {A} do cubo {B}, deixando o cubo {C} onde está."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "near": [
+       "A",
+       "B"
+      ]
+     },
+     {
+      "unchanged": [
+       "C"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_beside",
+     "B"
+    ]
+   ],
+   "min_calls": 4,
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ]
+  },
+  {
+   "id": "test-F5-troca-guarda",
+   "family": "F5",
+   "split": "test",
+   "domain": "militar",
+   "action": "trocar",
+   "canonical": false,
+   "author": "autor",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Exige local temporario e memoria do que esta na garra (o objeto na garra some da percepcao).",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "moved_role": "A",
+   "n_objects": [
+    2,
+    3
+   ],
+   "text": {
+    "pt": [
+     "Os cubos {A} e {B} são dois sentinelas que precisam trocar de posto. Faça a troca da guarda.",
+     "O {A} e o {B} são dois guardas; cada um deve assumir o posto do outro.",
+     "O quartel fica no alto da serra, e à noite faz muito frio. Os cubos {A} e {B} são dois sentinelas que precisam trocar de posto. Faça a troca da guarda."
+    ]
+   },
+   "direct": {
+    "pt": [
+     "Troque de lugar os cubos {A} e {B}.",
+     "Inverta as posições do cubo {A} e do cubo {B}.",
+     "Coloque o cubo {A} onde está o {B} e o {B} onde está o {A}."
+    ]
+   },
+   "success": {
+    "swapped": [
+     "A",
+     "B"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_temp"
+    ],
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_at_initial",
+     "A"
+    ],
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_at_initial",
+     "B"
+    ]
+   ],
+   "min_calls": 7,
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ]
+  },
+  {
+   "id": "test-F5-casa",
+   "family": "F5",
+   "split": "test",
+   "domain": "construção",
+   "action": "empilhar 3",
+   "canonical": true,
+   "author": "autor",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "moved_role": "B",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "O cubo {A} é o alicerce, o {B} são as paredes e o {C} é o telhado. Construa a casa.",
+     "Monte uma casinha: o {C} é o telhado, o {A} é a fundação e o {B} são as paredes.",
+     "Meu avô era pedreiro e adorava contar histórias de obra. O cubo {A} é o alicerce, o {B} são as paredes e o {C} é o telhado. Construa a casa."
+    ]
+   },
+   "direct": {
+    "pt": [
+     "Coloque o cubo {B} em cima do cubo {A} e depois o cubo {C} em cima do cubo {B}.",
+     "Monte uma torre com o {A} embaixo, o {B} no meio e o {C} no topo.",
+     "Empilhe o {B} sobre o {A} e, em seguida, o {C} sobre o {B}."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "on": [
+       "B",
+       "A"
+      ]
+     },
+     {
+      "on": [
+       "C",
+       "B"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_on",
+     "A"
+    ],
+    [
+     "pick",
+     "C"
+    ],
+    [
+     "place_on",
+     "B"
+    ]
+   ],
+   "min_calls": 5,
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ]
+  },
+  {
+   "id": "test-F5-estacoes",
+   "family": "F5",
+   "split": "test",
+   "domain": "calendário",
+   "action": "ordenar 4",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Horizonte mais longo (4 movimentos; LITERATURA.md, 4). As estacoes sao citadas fora de ordem: a ordem da fila vem do conhecimento do ciclo, nao da ordem de mencao.",
+   "roles": [
+    "A",
+    "B",
+    "C",
+    "D"
+   ],
+   "moved_role": "A",
+   "n_objects": [
+    4,
+    5
+   ],
+   "text": {
+    "pt": [
+     "O cubo {C} é o outono, o {A} é a primavera, o {D} é o inverno e o {B} é o verão. Enfileire as estações a partir da base do robô, na ordem em que acontecem, começando pela primavera perto da base.",
+     "Os cubos representam estações: {D} inverno, {B} verão, {A} primavera e {C} outono. Forme uma fila saindo da base do braço que siga o ciclo do ano, com a primavera mais perto do braço.",
+     "Minha avó dizia que cada estação tem seu cheiro. O cubo {C} é o outono, o {A} é a primavera, o {D} é o inverno e o {B} é o verão. Enfileire as estações a partir da base do robô, na ordem em que acontecem, começando pela primavera perto da base."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Alinhe os cubos em fila a partir da base do robô: o {A} mais perto dela, depois o {B}, o {C} e, mais longe, o {D}.",
+     "Forme uma fila reta saindo da base do braço, na ordem {A}, {B}, {C}, {D}, do mais próximo ao mais distante.",
+     "Organize os quatro cubos em linha, afastando-se da base do robô: {A}, depois {B}, depois {C} e por último {D}."
+    ]
+   },
+   "success": {
+    "line_ordered": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_slot",
+     0
+    ],
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_slot",
+     1
+    ],
+    [
+     "pick",
+     "C"
+    ],
+    [
+     "place_slot",
+     2
+    ],
+    [
+     "pick",
+     "D"
+    ],
+    [
+     "place_slot",
+     3
+    ]
+   ],
+   "min_calls": 9
+  },
+  {
+   "id": "test-F6-afastar-vizinho",
+   "family": "F6",
+   "split": "test",
+   "domain": "seleção",
+   "action": "afastar",
+   "canonical": false,
+   "author": "autor",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Papel B definido pela geometria: o cubo mais perto de A.",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "geometric_roles": {
+    "B": "nearest_to:A"
+   },
+   "moved_role": "B",
+   "n_objects": [
+    3,
+    4
+   ],
+   "scene_constraint": {
+    "within": [
+     "A",
+     "B",
+     0.2
+    ]
+   },
+   "text": {
+    "pt": [
+     "Afaste do cubo {A} o cubo que estiver mais perto dele, sem mover o {A}.",
+     "O cubo {A} precisa de espaço: leve para longe o vizinho mais próximo dele, sem tirar o {A} do lugar.",
+     "Passei a manhã reorganizando a mesa. Afaste do cubo {A} o cubo que estiver mais perto dele, sem mover o {A}."
+    ]
+   },
+   "direct": {
+    "pt": [
+     "Afaste o cubo {B} do cubo {A}, sem mover o cubo {A}.",
+     "Leve o cubo {B} para longe do cubo {A}; o {A} fica onde está.",
+     "Coloque o cubo {B} bem longe do cubo {A}, sem mexer no {A}."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "far": [
+       "B",
+       "A"
+      ]
+     },
+     {
+      "unchanged": [
+       "A"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_far",
+     "A"
+    ]
+   ],
+   "min_calls": 4,
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ]
+  },
+  {
+   "id": "test-F6-todos-perto",
+   "family": "F6",
+   "split": "test",
+   "domain": "quantificação",
+   "action": "agrupar",
+   "canonical": false,
+   "author": "autor",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A"
+   ],
+   "n_objects": [
+    3,
+    3
+   ],
+   "text": {
+    "pt": [
+     "Leve todos os cubos, exceto o {A}, para perto do {A}.",
+     "Reúna em volta do cubo {A} todos os outros cubos da mesa.",
+     "Vamos tirar uma foto da mesa para o relatório. Leve todos os cubos, exceto o {A}, para perto do {A}."
+    ]
+   },
+   "direct": {
+    "pt": [
+     "Coloque os cubos {OTHERS} perto do cubo {A}.",
+     "Leve os cubos {OTHERS} para junto do cubo {A}.",
+     "Aproxime os cubos {OTHERS} do cubo {A}."
+    ]
+   },
+   "success": {
+    "all_near": [
+     [
+      "@others"
+     ],
+     "A"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "foreach_other",
+     [
+      [
+       "pick",
+       "$o"
+      ],
+      [
+       "place_beside",
+       "A"
+      ]
+     ]
+    ]
+   ],
+   "min_calls": 6,
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ]
+  },
+  {
+   "id": "test-F7-cor-ausente",
+   "family": "F7",
+   "split": "test",
+   "domain": "inviável",
+   "action": "abster-se",
+   "canonical": false,
+   "author": "autor",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A"
+   ],
+   "absent_roles": [
+    "X"
+   ],
+   "n_objects": [
+    2,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Ponha o cubo {X} sobre o cubo {A}.",
+     "Empilhe o {X} em cima do {A}.",
+     "Estou montando um exemplo para a apresentação de sexta-feira. Ponha o cubo {X} sobre o cubo {A}."
+    ]
+   },
+   "success": {
+    "nothing_moved": []
+   },
+   "expected": "abstain",
+   "reference_plan": [],
+   "min_calls": 1,
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "abstain_type": "referente_ausente"
+  },
+  {
+   "id": "test-F7-contraditoria",
+   "family": "F7",
+   "split": "test",
+   "domain": "inviável",
+   "action": "abster-se",
+   "canonical": false,
+   "author": "autor",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "n_objects": [
+    2,
+    3
+   ],
+   "text": {
+    "pt": [
+     "Coloque o cubo {A} em cima do {B} e, ao mesmo tempo, o {B} em cima do {A}.",
+     "Deixe o {A} sobre o {B} e o {B} sobre o {A}, os dois no fim.",
+     "Isto é só um teste rápido antes do almoço. Coloque o cubo {A} em cima do {B} e, ao mesmo tempo, o {B} em cima do {A}."
+    ]
+   },
+   "success": {
+    "nothing_moved": []
+   },
+   "expected": "abstain",
+   "reference_plan": [],
+   "min_calls": 1,
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "abstain_type": "contraditoria"
+  },
+  {
+   "id": "test-F7-mais-pesado",
+   "family": "F7",
+   "split": "test",
+   "domain": "ambígua",
+   "action": "abster-se",
+   "canonical": false,
+   "author": "autor",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Capacidade ausente: os cubos sao identicos em tamanho e a cena nao informa massa.",
+   "roles": [
+    "A"
+   ],
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Pegue o cubo mais pesado e coloque-o sobre o {A}.",
+     "Ponha em cima do {A} o cubo de maior massa.",
+     "A bateria do notebook está acabando, então vamos rápido. Pegue o cubo mais pesado e coloque-o sobre o {A}."
+    ]
+   },
+   "success": {
+    "nothing_moved": []
+   },
+   "expected": "abstain",
+   "reference_plan": [],
+   "min_calls": 1,
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "abstain_type": "capacidade_ausente"
+  },
+  {
+   "id": "test-F7-premissa-falsa",
+   "family": "F7",
+   "split": "test",
+   "domain": "inviável",
+   "action": "abster-se",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "abstain_type": "premissa_falsa",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "n_objects": [
+    2,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Tire o cubo {A} de cima do cubo {B}.",
+     "Desempilhe o {A} que está sobre o {B}.",
+     "O sensor de temperatura da sala foi trocado hoje. Tire o cubo {A} de cima do cubo {B}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "success": {
+    "nothing_moved": []
+   },
+   "expected": "abstain",
+   "reference_plan": [],
+   "min_calls": 1,
+   "notes": "Premissa falsa: a cena sorteada nunca tem cubos empilhados."
+  },
+  {
+   "id": "test-F7-dentro",
+   "family": "F7",
+   "split": "test",
+   "domain": "inviável",
+   "action": "abster-se",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "abstain_type": "inviabilidade_fisica",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "n_objects": [
+    2,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Coloque o cubo {A} dentro do cubo {B}.",
+     "Guarde o {A} no interior do {B}.",
+     "Esta mesa foi comprada no ano passado. Coloque o cubo {A} dentro do cubo {B}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "success": {
+    "nothing_moved": []
+   },
+   "expected": "abstain",
+   "reference_plan": [],
+   "min_calls": 1,
+   "notes": "Inviabilidade fisica: os cubos sao macicos e do mesmo tamanho."
+  },
+  {
+   "id": "test-F7-aquele-ali",
+   "family": "F7",
+   "split": "test",
+   "domain": "ambígua",
+   "action": "abster-se",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "abstain_type": "intencao_subespecificada",
+   "roles": [],
+   "n_objects": [
+    2,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Coloque aquele ali.",
+     "Leva esse pra lá.",
+     "Choveu bastante durante a madrugada. Coloque aquele ali."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "success": {
+    "nothing_moved": []
+   },
+   "expected": "abstain",
+   "reference_plan": [],
+   "min_calls": 1,
+   "notes": "Subespecificada: sem gesto nem contexto, 'aquele' e 'ali' nao tem referente."
+  },
+  {
+   "id": "test-F7-cor-favorita",
+   "family": "F7",
+   "split": "test",
+   "domain": "ambígua",
+   "action": "abster-se",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "abstain_type": "intencao_subjetiva",
+   "roles": [
+    "A"
+   ],
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Ponha o cubo da minha cor favorita sobre o {A}.",
+     "Empilhe no {A} o cubo da cor de que eu mais gosto.",
+     "Hoje é meu aniversário. Ponha o cubo da minha cor favorita sobre o {A}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "success": {
+    "nothing_moved": []
+   },
+   "expected": "abstain",
+   "reference_plan": [],
+   "min_calls": 1,
+   "notes": "Subjetiva: a preferencia do usuario nao foi informada."
+  },
+  {
+   "id": "test-F1-gato-rato",
+   "family": "F1",
+   "split": "test",
+   "domain": "animais",
+   "action": "afastar",
+   "canonical": true,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Quem foge e o rato: o gato (A) fica parado.",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "moved_role": "B",
+   "n_objects": [
+    2,
+    4
+   ],
+   "scene_constraint": {
+    "within": [
+     "A",
+     "B",
+     0.2
+    ]
+   },
+   "text": {
+    "pt": [
+     "O cubo {A} é um gato faminto e o cubo {B} é um ratinho. Ajude o ratinho a escapar.",
+     "Imagine que o {A} é um gato com fome e o {B}, um rato pequeno. Salve o rato do gato.",
+     "Na casa da minha tia sempre teve gato. O cubo {A} é um gato faminto e o cubo {B} é um ratinho. Ajude o ratinho a escapar."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Afaste o cubo {B} do cubo {A}, sem mover o {A}.",
+     "Leve o cubo {B} para longe do cubo {A}, deixando o {A} onde está.",
+     "Distancie o {B} do {A} sem tirar o {A} do lugar."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "far": [
+       "B",
+       "A"
+      ]
+     },
+     {
+      "unchanged": [
+       "A"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_far",
+     "A"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "test-F1-terra-lua",
+   "family": "F1",
+   "split": "test",
+   "domain": "astronomia",
+   "action": "aproximar",
+   "canonical": true,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "moved_role": "B",
+   "n_objects": [
+    2,
+    4
+   ],
+   "text": {
+    "pt": [
+     "O cubo {A} é a Terra e o cubo {B} é a Lua, que escapou da órbita. Devolva a Lua para junto da Terra.",
+     "Faça de conta que o {A} é o nosso planeta e o {B} é o satélite dele, que se afastou. Traga o satélite de volta.",
+     "Ontem à noite a Lua estava cheia. O cubo {A} é a Terra e o cubo {B} é a Lua, que escapou da órbita. Devolva a Lua para junto da Terra."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {B} perto do cubo {A}, sem mover o {A}.",
+     "Leve o cubo {B} para junto do cubo {A}, deixando o {A} onde está.",
+     "Aproxime o {B} do {A} sem tirar o {A} do lugar."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "near": [
+       "B",
+       "A"
+      ]
+     },
+     {
+      "unchanged": [
+       "A"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_beside",
+     "A"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "test-F1-boneco-chapeu",
+   "family": "F1",
+   "split": "test",
+   "domain": "vestuário",
+   "action": "pôr sobre",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "moved_role": "B",
+   "n_objects": [
+    2,
+    4
+   ],
+   "text": {
+    "pt": [
+     "O cubo {A} é a cabeça de um boneco de neve e o cubo {B} é o chapéu dele. Ponha o chapéu no boneco.",
+     "O {B} é uma cartola e o {A} é a cabeça do boneco de neve. Vista a cartola nele.",
+     "Aqui quase nunca neva, mas as crianças adoram o tema. O cubo {A} é a cabeça de um boneco de neve e o cubo {B} é o chapéu dele. Ponha o chapéu no boneco."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {B} em cima do cubo {A}.",
+     "Empilhe o cubo {B} sobre o cubo {A}.",
+     "Ponha o {B} sobre o {A}."
+    ]
+   },
+   "success": {
+    "on": [
+     "B",
+     "A"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_on",
+     "A"
+    ]
+   ],
+   "min_calls": 3,
+   "perturb": {
+    "role": "A",
+    "call_index": 0,
+    "step": 50
+   }
+  },
+  {
+   "id": "test-F1-fila-onibus",
+   "family": "F1",
+   "split": "test",
+   "domain": "cotidiano",
+   "action": "ordenar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "moved_role": "A",
+   "n_objects": [
+    2,
+    4
+   ],
+   "text": {
+    "pt": [
+     "O ponto de ônibus fica na base do robô. Os cubos {A} e {B} são passageiros, e o {A} chegou primeiro. Arrume a fila.",
+     "Imagine que a base do braço é a parada do ônibus e que o {A} e o {B} esperam nela; o {A} chegou antes. Organize a fila de espera.",
+     "O ônibus das sete costuma atrasar. O ponto de ônibus fica na base do robô. Os cubos {A} e {B} são passageiros, e o {A} chegou primeiro. Arrume a fila."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Deixe o cubo {A} mais perto da base do robô do que o cubo {B}.",
+     "Coloque o cubo {A} numa posição mais próxima da base do robô que a do cubo {B}.",
+     "Ponha o {A} mais perto da base do braço do que o {B}."
+    ]
+   },
+   "success": {
+    "closer_to_base": [
+     "A",
+     "B"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_closer_than",
+     "B"
+    ]
+   ],
+   "min_calls": 4,
+   "scene_constraint": {
+    "base_dist_min": [
+     "B",
+     0.38
+    ]
+   },
+   "notes": "Cena: B comeca a >= 38 cm da base, para haver espaco mais perto dela."
+  },
+  {
+   "id": "test-F1-bombeiros",
+   "family": "F1",
+   "split": "test",
+   "domain": "emergência",
+   "action": "aproximar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "C e um distrator semantico (o hospital), que nao deve ser o destino.",
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "moved_role": "B",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "O cubo {A} é um incêndio, o {B} é o caminhão de bombeiros e o {C} é o hospital. Mande o caminhão para o incêndio.",
+     "Há fogo no {A}; o {B} é a viatura dos bombeiros e o {C}, o hospital da cidade. Leve a viatura até o fogo.",
+     "A cidade é pequena e todo mundo se conhece. O cubo {A} é um incêndio, o {B} é o caminhão de bombeiros e o {C} é o hospital. Mande o caminhão para o incêndio."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {B} perto do cubo {A}, sem mover o {A} nem o {C}.",
+     "Leve o cubo {B} para junto do cubo {A}; o {A} e o {C} ficam onde estão.",
+     "Aproxime o {B} do {A} sem mexer no {A} nem no {C}."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "near": [
+       "B",
+       "A"
+      ]
+     },
+     {
+      "unchanged": [
+       "A",
+       "C"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_beside",
+     "A"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "test-F2-fruteira",
+   "family": "F2",
+   "split": "test",
+   "domain": "alimentos",
+   "action": "aproximar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Cores fixas: banana madura = amarelo, berinjela = roxo.",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "fixed_colors": {
+    "A": "yellow",
+    "B": "purple"
+   },
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Junte o cubo da cor de uma banana madura ao cubo da cor de uma berinjela.",
+     "Aproxime o cubo que tem a cor da banana do que tem a cor da berinjela.",
+     "Estou montando uma fruteira de mentirinha para a aula. Junte o cubo da cor de uma banana madura ao cubo da cor de uma berinjela."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {A} perto do cubo {B}.",
+     "Leve o cubo {A} para junto do cubo {B}.",
+     "Aproxime o {A} do {B}."
+    ]
+   },
+   "success": {
+    "near": [
+     "A",
+     "B"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_beside",
+     "B"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "test-F2-mar-morango",
+   "family": "F2",
+   "split": "test",
+   "domain": "natureza",
+   "action": "afastar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Cores fixas: mar = azul, morango = vermelho.",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "fixed_colors": {
+    "A": "blue",
+    "B": "red"
+   },
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "scene_constraint": {
+    "within": [
+     "A",
+     "B",
+     0.2
+    ]
+   },
+   "text": {
+    "pt": [
+     "Afaste o cubo da cor do mar do cubo da cor de um morango.",
+     "Leve para longe do cubo cor de morango o cubo que tem a cor do oceano.",
+     "Passei o fim de semana no litoral. Afaste o cubo da cor do mar do cubo da cor de um morango."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Afaste o cubo {A} do cubo {B}.",
+     "Leve o cubo {A} para longe do cubo {B}.",
+     "Distancie o {A} do {B}."
+    ]
+   },
+   "success": {
+    "far": [
+     "A",
+     "B"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_far",
+     "B"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "test-F2-bandeira",
+   "family": "F2",
+   "split": "test",
+   "domain": "símbolos nacionais",
+   "action": "pôr sobre",
+   "canonical": true,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Cores fixas: losango = amarelo, fundo = verde.",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "fixed_colors": {
+    "A": "yellow",
+    "B": "green"
+   },
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Monte a bandeira do Brasil com dois cubos: a cor do losango fica sobre a cor do fundo.",
+     "Faça uma pilha de dois cubos que lembre a bandeira brasileira, com a cor do losango em cima da cor que preenche o fundo.",
+     "A Copa do Mundo começa daqui a alguns meses. Monte a bandeira do Brasil com dois cubos: a cor do losango fica sobre a cor do fundo."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {A} em cima do cubo {B}.",
+     "Empilhe o cubo {A} sobre o cubo {B}.",
+     "Ponha o {A} sobre o {B}."
+    ]
+   },
+   "success": {
+    "on": [
+     "A",
+     "B"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_on",
+     "B"
+    ]
+   ],
+   "min_calls": 3,
+   "perturb": {
+    "role": "B",
+    "call_index": 0,
+    "step": 50
+   }
+  },
+  {
+   "id": "test-F2-sinal-atencao",
+   "family": "F2",
+   "split": "test",
+   "domain": "trânsito",
+   "action": "ordenar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Cores fixas: atencao = amarelo, parar = vermelho. Cena: B comeca a >= 38 cm da base, para haver espaco mais perto dela.",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "fixed_colors": {
+    "A": "yellow",
+    "B": "red"
+   },
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Deixe o cubo da cor do sinal de atenção mais perto da base do robô do que o cubo da cor do sinal de parar.",
+     "Ponha o cubo com a cor da luz que pede atenção no semáforo mais próximo da base do braço que o cubo com a cor da luz que manda parar.",
+     "Na minha rua trocaram o semáforo semana passada. Deixe o cubo da cor do sinal de atenção mais perto da base do robô do que o cubo da cor do sinal de parar."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Deixe o cubo {A} mais perto da base do robô do que o cubo {B}.",
+     "Coloque o cubo {A} numa posição mais próxima da base do robô que a do cubo {B}.",
+     "Ponha o {A} mais perto da base do braço do que o {B}."
+    ]
+   },
+   "success": {
+    "closer_to_base": [
+     "A",
+     "B"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_closer_than",
+     "B"
+    ]
+   ],
+   "min_calls": 4,
+   "scene_constraint": {
+    "base_dist_min": [
+     "B",
+     0.38
+    ]
+   }
+  },
+  {
+   "id": "test-F2-sangue-folha",
+   "family": "F2",
+   "split": "test",
+   "domain": "natureza",
+   "action": "trocar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Cores fixas: sangue = vermelho, folha = verde.",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "fixed_colors": {
+    "A": "red",
+    "B": "green"
+   },
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Troque de lugar o cubo da cor do sangue e o cubo da cor de uma folha de árvore.",
+     "Inverta as posições do cubo que tem a cor do sangue e do que tem a cor das folhas.",
+     "O jardim lá de casa está cheio de folhas. Troque de lugar o cubo da cor do sangue e o cubo da cor de uma folha de árvore."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Troque de lugar os cubos {A} e {B}.",
+     "Inverta as posições do cubo {A} e do cubo {B}.",
+     "Coloque o cubo {A} onde está o {B} e o {B} onde está o {A}."
+    ]
+   },
+   "success": {
+    "swapped": [
+     "A",
+     "B"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_temp"
+    ],
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_at_initial",
+     "A"
+    ],
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_at_initial",
+     "B"
+    ]
+   ],
+   "min_calls": 7
+  },
+  {
+   "id": "test-F2-arco-iris",
+   "family": "F2",
+   "split": "test",
+   "domain": "óptica",
+   "action": "ordenar",
+   "canonical": true,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Cores citadas fora de ordem; a ordem vem do arco-iris (vermelho por fora, violeta por dentro).",
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "fixed_colors": {
+    "A": "red",
+    "B": "green",
+    "C": "purple"
+   },
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Faça uma fila saindo da base do robô com os cubos {C}, {A} e {B}, na ordem em que essas cores aparecem no arco-íris, começando, perto da base, pela cor da faixa de fora do arco.",
+     "Com os cubos {B}, {C} e {A}, monte uma fila a partir da base do braço que siga a sequência das cores do arco-íris, com a cor da borda externa do arco mais perto da base.",
+     "Choveu à tarde e apareceu um arco-íris enorme. Faça uma fila saindo da base do robô com os cubos {C}, {A} e {B}, na ordem em que essas cores aparecem no arco-íris, começando, perto da base, pela cor da faixa de fora do arco."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Alinhe os cubos em fila a partir da base do robô: o {A} mais perto dela, depois o {B} e, mais longe, o {C}.",
+     "Forme uma fila reta saindo da base do braço, na ordem {A}, {B}, {C}, do mais próximo ao mais distante.",
+     "Organize os três cubos em linha, afastando-se da base do robô: {A}, depois {B} e por último {C}."
+    ]
+   },
+   "success": {
+    "line_ordered": [
+     "A",
+     "B",
+     "C"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_slot",
+     0
+    ],
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_slot",
+     1
+    ],
+    [
+     "pick",
+     "C"
+    ],
+    [
+     "place_slot",
+     2
+    ]
+   ],
+   "min_calls": 7
+  },
+  {
+   "id": "test-F3-mais-perto-que",
+   "family": "F3",
+   "split": "test",
+   "domain": "espacial",
+   "action": "ordenar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "moved_role": "A",
+   "n_objects": [
+    2,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Deixe o cubo {A} mais perto da base do robô do que o cubo {B}.",
+     "Ponha o {A} numa posição mais próxima do braço que a do {B}.",
+     "A bancada foi limpa hoje de manhã. Deixe o cubo {A} mais perto da base do robô do que o cubo {B}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "no_twin_reason": "A instrucao ja e explicita; a inferencia e metrica (distancia a base).",
+   "success": {
+    "closer_to_base": [
+     "A",
+     "B"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_closer_than",
+     "B"
+    ]
+   ],
+   "min_calls": 4,
+   "scene_constraint": {
+    "base_dist_min": [
+     "B",
+     0.38
+    ]
+   },
+   "notes": "Cena: B comeca a >= 38 cm da base, para haver espaco mais perto dela."
+  },
+  {
+   "id": "test-F3-longe-sobre-perto",
+   "family": "F3",
+   "split": "test",
+   "domain": "espacial",
+   "action": "pôr sobre",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Papeis definidos pela geometria: A = mais longe da base, B = mais perto.",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "geometric_roles": {
+    "A": "farthest_from_base",
+    "B": "nearest_to_base"
+   },
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Empilhe o cubo mais distante da base do robô sobre o cubo mais próximo dela.",
+     "Ponha em cima do cubo mais perto do braço o cubo que está mais longe dele.",
+     "Vou precisar da mesa livre daqui a pouco. Empilhe o cubo mais distante da base do robô sobre o cubo mais próximo dela."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {A} em cima do cubo {B}.",
+     "Empilhe o cubo {A} sobre o cubo {B}.",
+     "Ponha o {A} sobre o {B}."
+    ]
+   },
+   "success": {
+    "on": [
+     "A",
+     "B"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_on",
+     "B"
+    ]
+   ],
+   "min_calls": 3,
+   "perturb": {
+    "role": "B",
+    "call_index": 0,
+    "step": 50
+   }
+  },
+  {
+   "id": "test-F3-vizinho-base",
+   "family": "F3",
+   "split": "test",
+   "domain": "espacial",
+   "action": "aproximar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "B = o mais perto da base entre os cubos que nao sao o A.",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "geometric_roles": {
+    "B": "nearest_to_base"
+   },
+   "moved_role": "B",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Leve o cubo que está mais perto da base do robô para junto do cubo {A}.",
+     "Aproxime do {A} o cubo mais próximo do braço.",
+     "Amanhã chega uma peça nova para o robô. Leve o cubo que está mais perto da base do robô para junto do cubo {A}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {B} perto do cubo {A}, sem mover o {A}.",
+     "Leve o cubo {B} para junto do cubo {A}, deixando o {A} onde está.",
+     "Aproxime o {B} do {A} sem tirar o {A} do lugar."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "near": [
+       "B",
+       "A"
+      ]
+     },
+     {
+      "unchanged": [
+       "A"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_beside",
+     "A"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "test-F3-fila-inversa",
+   "family": "F3",
+   "split": "test",
+   "domain": "espacial",
+   "action": "ordenar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "moved_role": "C",
+   "n_objects": [
+    3,
+    3
+   ],
+   "text": {
+    "pt": [
+     "Alinhe os cubos {A}, {B} e {C} numa fila que sai da base do robô, com o {A} na ponta mais distante, o {C} na ponta mais próxima e o {B} no meio.",
+     "Monte uma fila reta a partir do braço em que o {C} fica mais perto dele, o {A} mais longe e o {B} entre os dois.",
+     "O pessoal do turno da noite deixou tudo fora do lugar. Alinhe os cubos {A}, {B} e {C} numa fila que sai da base do robô, com o {A} na ponta mais distante, o {C} na ponta mais próxima e o {B} no meio."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "no_twin_reason": "A instrucao ja e explicita; a ordem e citada do mais longe para o mais perto.",
+   "success": {
+    "line_ordered": [
+     "C",
+     "B",
+     "A"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "C"
+    ],
+    [
+     "place_slot",
+     0
+    ],
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_slot",
+     1
+    ],
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_slot",
+     2
+    ]
+   ],
+   "min_calls": 7
+  },
+  {
+   "id": "test-F3-junto-do-mais-longe",
+   "family": "F3",
+   "split": "test",
+   "domain": "espacial",
+   "action": "aproximar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "B = o cubo mais distante de A.",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "geometric_roles": {
+    "B": "farthest_from:A"
+   },
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Leve o cubo {A} para junto do cubo que está mais longe dele.",
+     "Aproxime o {A} do cubo mais distante dele na mesa.",
+     "Esta mesa é maior do que a do outro laboratório. Leve o cubo {A} para junto do cubo que está mais longe dele."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {A} perto do cubo {B}, sem mover o {B}.",
+     "Leve o cubo {A} para junto do cubo {B}, deixando o {B} onde está.",
+     "Aproxime o {A} do {B} sem tirar o {B} do lugar."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "near": [
+       "A",
+       "B"
+      ]
+     },
+     {
+      "unchanged": [
+       "B"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_beside",
+     "B"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "test-F3-troca-extremos",
+   "family": "F3",
+   "split": "test",
+   "domain": "espacial",
+   "action": "trocar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "geometric_roles": {
+    "A": "nearest_to_base",
+    "B": "farthest_from_base"
+   },
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Troque de lugar o cubo mais perto da base do robô e o cubo mais longe dela.",
+     "Inverta as posições do cubo mais próximo e do mais distante do braço.",
+     "Isto faz parte de um teste de rotina. Troque de lugar o cubo mais perto da base do robô e o cubo mais longe dela."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Troque de lugar os cubos {A} e {B}.",
+     "Inverta as posições do cubo {A} e do cubo {B}.",
+     "Coloque o cubo {A} onde está o {B} e o {B} onde está o {A}."
+    ]
+   },
+   "success": {
+    "swapped": [
+     "A",
+     "B"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_temp"
+    ],
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_at_initial",
+     "A"
+    ],
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_at_initial",
+     "B"
+    ]
+   ],
+   "min_calls": 7
+  },
+  {
+   "id": "test-F4-sem-empilhar",
+   "family": "F4",
+   "split": "test",
+   "domain": "restrição",
+   "action": "aproximar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "moved_role": "A",
+   "n_objects": [
+    2,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Junte o {A} ao {B}, mas sem pôr um em cima do outro.",
+     "Aproxime o cubo {A} do cubo {B}, sem empilhá-los.",
+     "A mesa está um pouco inclinada para a esquerda. Junte o {A} ao {B}, mas sem pôr um em cima do outro."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {A} ao lado do cubo {B}, os dois apoiados na mesa.",
+     "Ponha o {A} encostado ao lado do {B}, ambos sobre a mesa.",
+     "Deixe o {A} junto ao {B}, lado a lado na mesa."
+    ]
+   },
+   "success": {
+    "beside": [
+     "A",
+     "B"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_beside",
+     "B"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "test-F4-so-move-B",
+   "family": "F4",
+   "split": "test",
+   "domain": "restrição",
+   "action": "aproximar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "moved_role": "B",
+   "n_objects": [
+    2,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Aproxime o {A} e o {B} sem tirar o {A} do lugar.",
+     "Faça o {A} e o {B} ficarem juntos, mas o {A} não pode sair de onde está.",
+     "A impressora do corredor está sem papel. Aproxime o {A} e o {B} sem tirar o {A} do lugar."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {B} perto do cubo {A}, sem mover o {A}.",
+     "Leve o cubo {B} para junto do cubo {A}, deixando o {A} onde está.",
+     "Aproxime o {B} do {A} sem tirar o {A} do lugar."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "near": [
+       "B",
+       "A"
+      ]
+     },
+     {
+      "unchanged": [
+       "A"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_beside",
+     "A"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "test-F4-sem-encostar",
+   "family": "F4",
+   "split": "test",
+   "domain": "restrição",
+   "action": "afastar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "scene_constraint": {
+    "within": [
+     "A",
+     "B",
+     0.2
+    ]
+   },
+   "text": {
+    "pt": [
+     "Afaste o {A} do {B} sem encostar no {B} nem no {C}.",
+     "Leve o {A} para longe do {B}, sem tocar no {B} e no {C}.",
+     "O piso do laboratório foi encerado hoje. Afaste o {A} do {B} sem encostar no {B} nem no {C}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Afaste o cubo {A} do cubo {B}, sem mover o {B} nem o {C}.",
+     "Leve o cubo {A} para longe do cubo {B}; o {B} e o {C} ficam onde estão.",
+     "Distancie o {A} do {B} sem mexer no {B} nem no {C}."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "far": [
+       "A",
+       "B"
+      ]
+     },
+     {
+      "unchanged": [
+       "B",
+       "C"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_far",
+     "B"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "test-F4-negacao",
+   "family": "F4",
+   "split": "test",
+   "domain": "negação",
+   "action": "pôr sobre",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Com exatamente 3 cubos, o unico que satisfaz a negacao e o C.",
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "moved_role": "C",
+   "n_objects": [
+    3,
+    3
+   ],
+   "text": {
+    "pt": [
+     "Ponha sobre o {A} um cubo que não seja o {B}.",
+     "Empilhe no {A} qualquer cubo, desde que não seja o {B}.",
+     "Esses três cubos vieram no mesmo kit. Ponha sobre o {A} um cubo que não seja o {B}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {C} em cima do cubo {A}.",
+     "Empilhe o cubo {C} sobre o cubo {A}.",
+     "Ponha o {C} sobre o {A}."
+    ]
+   },
+   "success": {
+    "on": [
+     "C",
+     "A"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "C"
+    ],
+    [
+     "place_on",
+     "A"
+    ]
+   ],
+   "min_calls": 3,
+   "perturb": {
+    "role": "A",
+    "call_index": 0,
+    "step": 50
+   }
+  },
+  {
+   "id": "test-F4-longe-de-C",
+   "family": "F4",
+   "split": "test",
+   "domain": "restrição",
+   "action": "aproximar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "scene_constraint": {
+    "not": {
+     "within": [
+      "B",
+      "C",
+      0.2
+     ]
+    }
+   },
+   "text": {
+    "pt": [
+     "Leve o {A} para perto do {B}, mas mantenha-o longe do {C}.",
+     "Aproxime o {A} do {B}, sem deixá-lo ficar perto do {C}.",
+     "A luz da sala pisca de vez em quando. Leve o {A} para perto do {B}, mas mantenha-o longe do {C}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {A} perto do cubo {B} e não perto do cubo {C}.",
+     "Leve o cubo {A} para junto do {B}, longe do {C}.",
+     "Aproxime o {A} do {B}, mantendo-o afastado do {C}."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "near": [
+       "A",
+       "B"
+      ]
+     },
+     {
+      "not": {
+       "near": [
+        "A",
+        "C"
+       ]
+      }
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_beside",
+     "B"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "test-F4-todos-menos",
+   "family": "F4",
+   "split": "test",
+   "domain": "restrição",
+   "action": "agrupar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "n_objects": [
+    4,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Junte todos os cubos ao {A}, menos o {B}, que fica onde está.",
+     "Reúna em volta do {A} os demais cubos, exceto o {B}, que não pode sair do lugar.",
+     "O semestre termina em dezembro. Junte todos os cubos ao {A}, menos o {B}, que fica onde está."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque os cubos {OTHERS} perto do cubo {A}, sem mover o cubo {B}.",
+     "Leve os cubos {OTHERS} para junto do cubo {A}; o {B} fica onde está.",
+     "Aproxime do {A} os cubos {OTHERS}, sem mexer no {B}."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "all_near": [
+       [
+        "@others"
+       ],
+       "A"
+      ]
+     },
+     {
+      "unchanged": [
+       "B"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "foreach_other",
+     [
+      [
+       "pick",
+       "$o"
+      ],
+      [
+       "place_beside",
+       "A"
+      ]
+     ]
+    ]
+   ],
+   "min_calls": 6
+  },
+  {
+   "id": "test-F5-danca-cadeiras",
+   "family": "F5",
+   "split": "test",
+   "domain": "jogos",
+   "action": "rodízio",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "4 movimentos: exige um lugar temporario e memoria das posicoes iniciais.",
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Os cubos {A}, {B} e {C} brincam de dança das cadeiras, sem cadeira sobrando. Ao sinal, cada um passa para a cadeira do seguinte: o {A} para a do {B}, o {B} para a do {C} e o {C} para a do {A}.",
+     "Rodízio de lugares: o {A} ocupa o lugar do {B}, o {B} ocupa o lugar do {C} e o {C} fica com o antigo lugar do {A}.",
+     "As crianças da turma inventaram uma versão nova da brincadeira. Os cubos {A}, {B} e {C} brincam de dança das cadeiras, sem cadeira sobrando. Ao sinal, cada um passa para a cadeira do seguinte: o {A} para a do {B}, o {B} para a do {C} e o {C} para a do {A}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {A} onde está o {B}, o {B} onde está o {C} e o {C} onde está o {A}.",
+     "Faça um rodízio: o {A} vai para a posição do {B}, o {B} para a do {C} e o {C} para a do {A}.",
+     "Mova o {A} para o lugar do {B}, o {B} para o lugar do {C} e o {C} para o lugar do {A}."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "at_initial": [
+       "A",
+       "B"
+      ]
+     },
+     {
+      "at_initial": [
+       "B",
+       "C"
+      ]
+     },
+     {
+      "at_initial": [
+       "C",
+       "A"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_temp"
+    ],
+    [
+     "pick",
+     "C"
+    ],
+    [
+     "place_at_initial",
+     "A"
+    ],
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_at_initial",
+     "C"
+    ],
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_at_initial",
+     "B"
+    ]
+   ],
+   "min_calls": 9
+  },
+  {
+   "id": "test-F5-revista",
+   "family": "F5",
+   "split": "test",
+   "domain": "militar",
+   "action": "trocar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "4 movimentos (troca com lugar temporario + aproximacao).",
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Os sentinelas {A} e {B} trocam de posto, e o oficial {C} vai conferir: no fim, ele fica ao lado do novo posto do {A}.",
+     "Troca de guarda entre o {A} e o {B}; depois, o comandante {C} passa a revista e para junto do {A}, já no posto novo.",
+     "O inverno deste ano está mais rigoroso que o normal. Os sentinelas {A} e {B} trocam de posto, e o oficial {C} vai conferir: no fim, ele fica ao lado do novo posto do {A}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Troque de lugar os cubos {A} e {B} e depois coloque o cubo {C} perto do cubo {A}.",
+     "Inverta as posições do {A} e do {B}; em seguida, leve o {C} para junto do {A}.",
+     "Coloque o {A} onde está o {B}, o {B} onde está o {A} e, por fim, o {C} ao lado do {A}."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "swapped": [
+       "A",
+       "B"
+      ]
+     },
+     {
+      "near": [
+       "C",
+       "A"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_temp"
+    ],
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_at_initial",
+     "A"
+    ],
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_at_initial",
+     "B"
+    ],
+    [
+     "pick",
+     "C"
+    ],
+    [
+     "place_beside",
+     "A"
+    ]
+   ],
+   "min_calls": 9
+  },
+  {
+   "id": "test-F5-inverter-pilha",
+   "family": "F5",
+   "split": "test",
+   "domain": "construção",
+   "action": "pôr sobre",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "So o estado final conta (B sobre A); o plano curto pula a pilha intermediaria.",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "moved_role": "B",
+   "n_objects": [
+    2,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Empilhe o {A} sobre o {B} e, em seguida, inverta a pilha.",
+     "Monte uma torre com o {A} em cima do {B}; depois deixe a torre de cabeça para baixo.",
+     "Peguei estes cubos emprestados do laboratório vizinho. Empilhe o {A} sobre o {B} e, em seguida, inverta a pilha."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {B} em cima do cubo {A}.",
+     "Empilhe o cubo {B} sobre o cubo {A}.",
+     "Ponha o {B} sobre o {A}."
+    ]
+   },
+   "success": {
+    "on": [
+     "B",
+     "A"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_on",
+     "A"
+    ]
+   ],
+   "min_calls": 3
+  },
+  {
+   "id": "test-F5-estacionamento",
+   "family": "F5",
+   "split": "test",
+   "domain": "trânsito",
+   "action": "trocar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "moved_role": "B",
+   "n_objects": [
+    2,
+    4
+   ],
+   "text": {
+    "pt": [
+     "O {B} quer a vaga onde o {A} está estacionado. Libere a vaga, estacione o {B} nela e deixe o {A} parado logo ao lado.",
+     "O carro {B} precisa da vaga do carro {A}: tire o {A}, coloque o {B} no lugar dele e estacione o {A} colado ao {B}.",
+     "O estacionamento do prédio vive lotado. O {B} quer a vaga onde o {A} está estacionado. Libere a vaga, estacione o {B} nela e deixe o {A} parado logo ao lado."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {B} onde está o cubo {A} e deixe o {A} perto do {B}.",
+     "Leve o {B} para a posição atual do {A} e ponha o {A} ao lado do {B}.",
+     "Ponha o {B} no lugar do {A} e o {A} junto ao {B}."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "at_initial": [
+       "B",
+       "A"
+      ]
+     },
+     {
+      "near": [
+       "A",
+       "B"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_temp"
+    ],
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_at_initial",
+     "A"
+    ],
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_beside",
+     "B"
+    ]
+   ],
+   "min_calls": 7
+  },
+  {
+   "id": "test-F5-carteiro",
+   "family": "F5",
+   "split": "test",
+   "domain": "correio",
+   "action": "aproximar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Estado oculto: o carteiro termina onde comecou; so a carta muda de lugar.",
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "moved_role": "B",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "O cubo {A} é um carteiro que leva a carta {B} até a casa {C} e depois volta exatamente para onde saiu.",
+     "O {A} faz a entrega: deixa a carta ({B}) junto da casa ({C}) e retorna ao ponto de partida.",
+     "Hoje é feriado em algumas cidades. O cubo {A} é um carteiro que leva a carta {B} até a casa {C} e depois volta exatamente para onde saiu."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {B} perto do cubo {C}, sem mover o {A} nem o {C}.",
+     "Leve o cubo {B} para junto do cubo {C}; o {A} e o {C} terminam onde estão.",
+     "Aproxime o {B} do {C} sem mexer no {A} nem no {C}."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "near": [
+       "B",
+       "C"
+      ]
+     },
+     {
+      "unchanged": [
+       "A",
+       "C"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_beside",
+     "C"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "test-F6-dois-mais-perto",
+   "family": "F6",
+   "split": "test",
+   "domain": "seleção",
+   "action": "agrupar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "B e C = os dois cubos mais proximos de A.",
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "geometric_roles": {
+    "B": "nearest_to:A",
+    "C": "nearest_to:A"
+   },
+   "moved_role": "B",
+   "n_objects": [
+    4,
+    5
+   ],
+   "text": {
+    "pt": [
+     "Coloque ao lado do {A}, sem tirá-lo do lugar, os dois cubos que estão mais perto dele.",
+     "Os dois vizinhos mais próximos do {A} devem ficar encostados nele; o {A} não sai de onde está.",
+     "Recebi estes cubos de presente de um colega. Coloque ao lado do {A}, sem tirá-lo do lugar, os dois cubos que estão mais perto dele."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque os cubos {B} e {C} perto do cubo {A}, sem mover o {A}.",
+     "Leve o {B} e o {C} para junto do {A}, deixando o {A} onde está.",
+     "Aproxime do {A} os cubos {B} e {C}, sem tirar o {A} do lugar."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "near": [
+       "B",
+       "A"
+      ]
+     },
+     {
+      "near": [
+       "C",
+       "A"
+      ]
+     },
+     {
+      "unchanged": [
+       "A"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_beside",
+     "A"
+    ],
+    [
+     "pick",
+     "C"
+    ],
+    [
+     "place_beside",
+     "A"
+    ]
+   ],
+   "min_calls": 6
+  },
+  {
+   "id": "test-F6-exceto-dois",
+   "family": "F6",
+   "split": "test",
+   "domain": "quantificação",
+   "action": "agrupar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "n_objects": [
+    5,
+    5
+   ],
+   "text": {
+    "pt": [
+     "Leve para perto do {A} todos os cubos, menos o {B} e o {C}.",
+     "Reúna junto do {A} todos os demais cubos, com exceção do {B} e do {C}.",
+     "A reunião foi remarcada para quinta-feira. Leve para perto do {A} todos os cubos, menos o {B} e o {C}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque os cubos {OTHERS} perto do cubo {A}.",
+     "Leve os cubos {OTHERS} para junto do cubo {A}.",
+     "Aproxime os cubos {OTHERS} do cubo {A}."
+    ]
+   },
+   "success": {
+    "all_near": [
+     [
+      "@others"
+     ],
+     "A"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "foreach_other",
+     [
+      [
+       "pick",
+       "$o"
+      ],
+      [
+       "place_beside",
+       "A"
+      ]
+     ]
+    ]
+   ],
+   "min_calls": 6
+  },
+  {
+   "id": "test-F6-contar",
+   "family": "F6",
+   "split": "test",
+   "domain": "quantificação",
+   "action": "pôr sobre",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Sempre 4 cubos: o ramo correto e o SEGUNDO citado ('B sobre A'), para nao premiar o primeiro mencionado.",
+   "roles": [
+    "A",
+    "B"
+   ],
+   "moved_role": "B",
+   "n_objects": [
+    4,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Conte os cubos da mesa. Se houver três ou menos, ponha o {A} sobre o {B}; se houver mais de três, ponha o {B} sobre o {A}.",
+     "Se existirem no máximo três cubos na mesa, empilhe o {A} no {B}; caso contrário, empilhe o {B} no {A}.",
+     "O inventário do laboratório está atrasado. Conte os cubos da mesa. Se houver três ou menos, ponha o {A} sobre o {B}; se houver mais de três, ponha o {B} sobre o {A}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {B} em cima do cubo {A}.",
+     "Empilhe o cubo {B} sobre o cubo {A}.",
+     "Ponha o {B} sobre o {A}."
+    ]
+   },
+   "success": {
+    "on": [
+     "B",
+     "A"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_on",
+     "A"
+    ]
+   ],
+   "min_calls": 3
+  },
+  {
+   "id": "test-F6-o-mais-perto-de-B",
+   "family": "F6",
+   "split": "test",
+   "domain": "seleção",
+   "action": "aproximar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "C = o cubo mais proximo de B, excluindo A.",
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "geometric_roles": {
+    "C": "nearest_to:B"
+   },
+   "moved_role": "C",
+   "n_objects": [
+    4,
+    5
+   ],
+   "text": {
+    "pt": [
+     "Leve até o {A} o cubo que estiver mais perto do {B}, sem contar o próprio {A}.",
+     "Aproxime do {A} o vizinho mais próximo do {B} (o {A} não conta).",
+     "O ar-condicionado da sala está quebrado. Leve até o {A} o cubo que estiver mais perto do {B}, sem contar o próprio {A}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {C} perto do cubo {A}, sem mover o {A}.",
+     "Leve o cubo {C} para junto do cubo {A}, deixando o {A} onde está.",
+     "Aproxime o {C} do {A} sem tirar o {A} do lugar."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "near": [
+       "C",
+       "A"
+      ]
+     },
+     {
+      "unchanged": [
+       "A"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "C"
+    ],
+    [
+     "place_beside",
+     "A"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "test-F6-afastar-todos",
+   "family": "F6",
+   "split": "test",
+   "domain": "quantificação",
+   "action": "afastar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "moved_role": "B",
+   "n_objects": [
+    3,
+    3
+   ],
+   "scene_constraint": {
+    "and": [
+     {
+      "within": [
+       "A",
+       "B",
+       0.15
+      ]
+     },
+     {
+      "within": [
+       "A",
+       "C",
+       0.15
+      ]
+     }
+    ]
+   },
+   "text": {
+    "pt": [
+     "Afaste do {A} todos os outros cubos, sem mover o {A}.",
+     "Deixe o {A} sozinho: leve os demais cubos para longe dele, sem tirá-lo do lugar.",
+     "O café da copa acabou cedo hoje. Afaste do {A} todos os outros cubos, sem mover o {A}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Afaste os cubos {B} e {C} do cubo {A}, sem mover o {A}.",
+     "Leve o {B} e o {C} para longe do {A}, deixando o {A} onde está.",
+     "Distancie o {B} e o {C} do {A} sem tirar o {A} do lugar."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "far": [
+       "B",
+       "A"
+      ]
+     },
+     {
+      "far": [
+       "C",
+       "A"
+      ]
+     },
+     {
+      "unchanged": [
+       "A"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_far",
+     "A"
+    ],
+    [
+     "pick",
+     "C"
+    ],
+    [
+     "place_far",
+     "A"
+    ]
+   ],
+   "min_calls": 6,
+   "notes": "Cena: B e C comecam a <= 15 cm de A (era 20 cm). Com a area limitada pelo alcance do braco (r <= 0,62 m), um cubo a 20 cm nem sempre tinha para onde ganhar os 10 cm de 'far'. Ajuste de cena em 2026-10-10, sem mudar texto nem predicado."
+  },
+  {
+   "id": "test-F6-qualquer-um",
+   "family": "F6",
+   "split": "test",
+   "domain": "quantificação",
+   "action": "aproximar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Quantificador existencial: qualquer um dos dois satisfaz.",
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "n_objects": [
+    3,
+    3
+   ],
+   "text": {
+    "pt": [
+     "Coloque qualquer um dos outros cubos ao lado do {A}.",
+     "Escolha um cubo qualquer, que não seja o {A}, e deixe-o junto do {A}.",
+     "A internet caiu durante a manhã. Coloque qualquer um dos outros cubos ao lado do {A}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {B} ou o cubo {C} perto do cubo {A}.",
+     "Leve o {B} ou o {C} para junto do {A}.",
+     "Aproxime do {A} um destes: o {B} ou o {C}."
+    ]
+   },
+   "success": {
+    "or": [
+     {
+      "near": [
+       "B",
+       "A"
+      ]
+     },
+     {
+      "near": [
+       "C",
+       "A"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_beside",
+     "A"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "test-F7-caixa",
+   "family": "F7",
+   "split": "test",
+   "domain": "inviável",
+   "action": "abster-se",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Nao ha caixa na cena.",
+   "abstain_type": "referente_ausente",
+   "roles": [
+    "A"
+   ],
+   "n_objects": [
+    2,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Guarde o cubo {A} dentro da caixa de papelão.",
+     "Ponha o {A} na caixa de papelão.",
+     "A faxina do laboratório é amanhã. Guarde o cubo {A} dentro da caixa de papelão."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "success": {
+    "nothing_moved": []
+   },
+   "expected": "abstain",
+   "reference_plan": [],
+   "min_calls": 1
+  },
+  {
+   "id": "dev2-F1-cachorro-osso",
+   "family": "F1",
+   "split": "dev",
+   "domain": "animais",
+   "action": "aproximar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "moved_role": "B",
+   "n_objects": [
+    2,
+    4
+   ],
+   "text": {
+    "pt": [
+     "O cubo {A} é um cachorro e o cubo {B} é um osso. Dê o osso ao cachorro.",
+     "Imagine que o {A} é um cão e o {B}, um osso. Entregue o osso a ele.",
+     "O cachorro do vizinho late a noite toda. O cubo {A} é um cachorro e o cubo {B} é um osso. Dê o osso ao cachorro."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {B} perto do cubo {A}, sem mover o {A}.",
+     "Leve o cubo {B} para junto do cubo {A}, deixando o {A} onde está.",
+     "Aproxime o {B} do {A} sem tirar o {A} do lugar."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "near": [
+       "B",
+       "A"
+      ]
+     },
+     {
+      "unchanged": [
+       "A"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_beside",
+     "A"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "dev2-F2-cereja-limao",
+   "family": "F2",
+   "split": "dev",
+   "domain": "alimentos",
+   "action": "aproximar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "fixed_colors": {
+    "A": "red",
+    "B": "yellow"
+   },
+   "moved_role": "A",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Junte o cubo da cor de uma cereja ao cubo da cor de um limão-siciliano.",
+     "Aproxime o cubo cor de cereja do cubo que tem a cor do limão-siciliano.",
+     "Vou fazer uma torta no fim de semana. Junte o cubo da cor de uma cereja ao cubo da cor de um limão-siciliano."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {A} perto do cubo {B}.",
+     "Leve o cubo {A} para junto do cubo {B}.",
+     "Aproxime o {A} do {B}."
+    ]
+   },
+   "success": {
+    "near": [
+     "A",
+     "B"
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_beside",
+     "B"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "dev2-F3-longe-para-A",
+   "family": "F3",
+   "split": "dev",
+   "domain": "espacial",
+   "action": "aproximar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "geometric_roles": {
+    "B": "farthest_from_base"
+   },
+   "moved_role": "B",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Leve o cubo mais distante da base do robô para junto do cubo {A}.",
+     "Aproxime do {A} o cubo que está mais longe do braço.",
+     "A manutenção do robô foi ontem. Leve o cubo mais distante da base do robô para junto do cubo {A}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {B} perto do cubo {A}, sem mover o {A}.",
+     "Leve o cubo {B} para junto do cubo {A}, deixando o {A} onde está.",
+     "Aproxime o {B} do {A} sem tirar o {A} do lugar."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "near": [
+       "B",
+       "A"
+      ]
+     },
+     {
+      "unchanged": [
+       "A"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_beside",
+     "A"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "dev2-F4-sem-mexer-B",
+   "family": "F4",
+   "split": "dev",
+   "domain": "restrição",
+   "action": "aproximar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "moved_role": "A",
+   "n_objects": [
+    2,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Ponha o {A} perto do {B} sem mexer no {B}.",
+     "Aproxime o {A} do {B}; o {B} tem que continuar onde está.",
+     "O projetor da sala queimou. Ponha o {A} perto do {B} sem mexer no {B}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {A} perto do cubo {B}, sem mover o {B}.",
+     "Leve o cubo {A} para junto do cubo {B}, deixando o {B} onde está.",
+     "Aproxime o {A} do {B} sem tirar o {B} do lugar."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "near": [
+       "A",
+       "B"
+      ]
+     },
+     {
+      "unchanged": [
+       "B"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "A"
+    ],
+    [
+     "place_beside",
+     "B"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "dev2-F5-escada",
+   "family": "F5",
+   "split": "dev",
+   "domain": "construção",
+   "action": "empilhar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B",
+    "C"
+   ],
+   "moved_role": "B",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Faça uma escadinha: o {B} sobre o {A} e o {C} encostado ao lado da pilha.",
+     "Monte dois degraus: empilhe o {B} no {A} e deixe o {C} junto da torrinha.",
+     "Meu irmão está reformando a casa. Faça uma escadinha: o {B} sobre o {A} e o {C} encostado ao lado da pilha."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {B} em cima do cubo {A} e depois o cubo {C} perto do cubo {A}.",
+     "Empilhe o {B} sobre o {A}; em seguida, ponha o {C} ao lado do {A}.",
+     "Ponha o {B} sobre o {A} e o {C} junto do {A}."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "on": [
+       "B",
+       "A"
+      ]
+     },
+     {
+      "near": [
+       "C",
+       "A"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_on",
+     "A"
+    ],
+    [
+     "pick",
+     "C"
+    ],
+    [
+     "place_beside",
+     "B"
+    ]
+   ],
+   "min_calls": 5,
+   "notes": "Com B sobre A, o A fica coberto para a camera; a referencia da pilha e o B (topo).",
+   "perturb": {
+    "role": "A",
+    "call_index": 0,
+    "step": 50
+   }
+  },
+  {
+   "id": "dev2-F6-mais-longe-de-A",
+   "family": "F6",
+   "split": "dev",
+   "domain": "seleção",
+   "action": "aproximar",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "roles": [
+    "A",
+    "B"
+   ],
+   "geometric_roles": {
+    "B": "farthest_from:A"
+   },
+   "moved_role": "B",
+   "n_objects": [
+    3,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Leve para perto do {A} o cubo que estiver mais longe dele, sem mover o {A}.",
+     "Aproxime do {A} o cubo mais distante dele; o {A} fica parado.",
+     "O laboratório vai mudar de andar. Leve para perto do {A} o cubo que estiver mais longe dele, sem mover o {A}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "direct": {
+    "pt": [
+     "Coloque o cubo {B} perto do cubo {A}, sem mover o {A}.",
+     "Leve o cubo {B} para junto do cubo {A}, deixando o {A} onde está.",
+     "Aproxime o {B} do {A} sem tirar o {A} do lugar."
+    ]
+   },
+   "success": {
+    "and": [
+     {
+      "near": [
+       "B",
+       "A"
+      ]
+     },
+     {
+      "unchanged": [
+       "A"
+      ]
+     }
+    ]
+   },
+   "expected": "act",
+   "reference_plan": [
+    [
+     "pick",
+     "B"
+    ],
+    [
+     "place_beside",
+     "A"
+    ]
+   ],
+   "min_calls": 4
+  },
+  {
+   "id": "dev2-F7-transparente",
+   "family": "F7",
+   "split": "dev",
+   "domain": "inviável",
+   "action": "abster-se",
+   "canonical": false,
+   "author": "Claude Opus 5.5 (rascunho)",
+   "reviewed_by": [
+    "Gabriel Stoppa"
+   ],
+   "notes": "Nao ha cubo transparente na cena.",
+   "abstain_type": "referente_ausente",
+   "roles": [
+    "A"
+   ],
+   "n_objects": [
+    2,
+    4
+   ],
+   "text": {
+    "pt": [
+     "Coloque o cubo transparente sobre o cubo {A}.",
+     "Empilhe no {A} o cubo de vidro transparente.",
+     "A janela do laboratório estava aberta. Coloque o cubo transparente sobre o cubo {A}."
+    ]
+   },
+   "paraphrase_axes": [
+    "base",
+    "lexical",
+    "contexto"
+   ],
+   "success": {
+    "nothing_moved": []
+   },
+   "expected": "abstain",
+   "reference_plan": [],
+   "min_calls": 1
+  }
+ ]
+}

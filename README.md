@@ -189,6 +189,30 @@ A few non-obvious things that cost real debugging time and are worth knowing if 
 - **The RG2 gripper's base ships as a free dynamic body.** Mounted directly on the arm, it would free-fall under gravity independent of the arm's own motion unless explicitly marked static after attachment.
 - **Color detection needs a saturation floor, not just a hue window.** The robot's own light-blue trim falls inside a naive "blue" hue range; requiring high saturation separates the object's pure color from the robot's desaturated paint.
 
+## Benchmark (comparative evaluation)
+
+The evaluation protocol — tasks, models, number of runs, success criteria, exclusion rules and the pre-registered analysis — is in [`benchmark/PROTOCOLO.md`](benchmark/PROTOCOLO.md) (Portuguese). The pipeline lives in `src/benchmark/`:
+
+| Piece | What it does |
+|---|---|
+| `benchmark/tasks/instructions.json` | instruction templates (families F1–F7, paraphrases, direct twins, success predicates, reference plans) |
+| `tasks.py`, `schedule.py` | per-seed scene sampling with counterbalanced colors; paired, block-randomized episode plan |
+| `backends/coppelia.py` | harness-owned scene reset per seed, one fresh MCP server per episode, ground-truth snapshots, before/after images |
+| `backends/fake.py` | kinematic stand-in for CoppeliaSim, to test the whole pipeline offline (not data) |
+| `agents/` | Claude, Gemini and GPT adapters with per-turn tokens/latency; `noop`, `first_mentioned` and `oracle` baselines |
+| `predicates.py`, `symbolic.py`, `scoring.py` | final-state success predicates, symbolic plan execution (semantic correctness), report fidelity, failure attribution |
+| `analysis.py`, `benchmark/analysis/glmm.R` | instruction-level bootstrap, McNemar + Holm, mixed-effects logistic models |
+
+```bash
+.venv/Scripts/python.exe -m pytest tests -q
+.venv/Scripts/python.exe scripts/bench_validate_tasks.py --config benchmark/pilot.toml
+.venv/Scripts/python.exe scripts/bench_run.py --config benchmark/pilot.toml --backend fake --models base-oraculo
+.venv/Scripts/python.exe scripts/bench_run.py --config benchmark/pilot.toml          # real simulator
+.venv/Scripts/python.exe scripts/bench_analyze.py benchmark/results/piloto-dev
+```
+
+The MCP server keeps its previous behavior unless the `BENCH_*` environment variables are set by the harness (minimal tool descriptions, neutral object ids, step-timed perturbation, ground-truth event log).
+
 ## Roadmap
 
 - [x] Phase 0 — Simulator + robot environment
